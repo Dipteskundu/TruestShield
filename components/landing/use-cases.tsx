@@ -41,7 +41,7 @@ export function UseCases() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-14 max-w-2xl text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
             Who is it for?
           </h2>
           <p className="text-muted-foreground">
@@ -60,10 +60,10 @@ export function UseCases() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="group rounded-lg border bg-card p-6 transition-all hover:shadow-md hover:-translate-y-0.5"
+                className="glass group rounded-2xl p-6 transition-all duration-300 hover:shadow-glass-sm hover:border-primary/20"
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                  <Icon className="h-6 w-6 text-primary" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl gradient-primary shadow-glow-sm transition-transform group-hover:scale-110">
+                  <Icon className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="mb-2 font-semibold">{item.title}</h3>
                 <p className="text-sm text-muted-foreground">

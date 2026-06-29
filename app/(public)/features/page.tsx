@@ -1,13 +1,6 @@
 import { Mail, Link2, Image, FileText, Shield, Check, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -20,6 +13,7 @@ const modules = [
     icon: Mail,
     title: "Spam & Scam Text Detection",
     description: "Analyze emails, job postings, and messages for fraud patterns.",
+    gradient: "gradient-primary",
     features: [
       "Spoofed sender and domain detection",
       "Phishing link identification",
@@ -35,6 +29,7 @@ const modules = [
     icon: Link2,
     title: "URL / Link Scanner",
     description: "Verify links are safe before you click.",
+    gradient: "gradient-accent",
     features: [
       "Full redirect chain tracing and unshortening",
       "WHOIS domain age lookup",
@@ -49,6 +44,7 @@ const modules = [
     icon: Image,
     title: "AI Image Detection",
     description: "Detect AI-generated and deepfake images.",
+    gradient: "bg-gradient-to-br from-amber-500 to-orange-500",
     features: [
       "GAN fingerprint analysis",
       "Diffusion artifact detection",
@@ -63,6 +59,7 @@ const modules = [
     icon: FileText,
     title: "Legal Document Analysis",
     description: "Understand contracts in plain English.",
+    gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
     features: [
       "PDF upload or paste text directly",
       "Document type selection (lease, NDA, freelance, etc.)",
@@ -83,7 +80,7 @@ export default function FeaturesPage() {
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="mx-auto mb-16 max-w-3xl text-center">
-        <h1 className="mb-4 text-4xl font-bold">All features</h1>
+        <h1 className="mb-4 text-4xl font-bold tracking-tight">All features</h1>
         <p className="text-lg text-muted-foreground">
           Four powerful modules. One unified platform. Every scan returns a
           clear verdict, confidence score, and plain-English reasons.
@@ -96,50 +93,44 @@ export default function FeaturesPage() {
           return (
             <div
               key={mod.title}
-              className={`grid gap-8 items-center ${
-                index % 2 === 0 ? "md:grid-cols-2" : "md:grid-cols-2 md:direction-rtl"
-              }`}
+              className={`grid gap-8 items-center md:grid-cols-2`}
             >
               <div className={index % 2 === 1 ? "md:order-2" : ""}>
-                <Card>
-                  <CardHeader>
-                    <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                      <Icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <CardTitle className="text-xl">{mod.title}</CardTitle>
-                    <CardDescription>{mod.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <ul className="space-y-2">
-                      {mod.features.map((feat) => (
-                        <li
-                          key={feat}
-                          className="flex items-start gap-2 text-sm text-muted-foreground"
-                        >
-                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
-                          {feat}
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="text-xs text-muted-foreground border-t pt-3">
-                      Usage: {mod.limits}
-                    </p>
-                    <Link href={mod.href}>
-                      <Button variant="outline" className="gap-2">
-                        Try it now
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
+                <div className="glass rounded-2xl p-6 transition-all hover:shadow-glass-sm">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl text-white shadow-glow-sm" style={{background: "var(--gradient-primary)"}}>
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h2 className="mb-1 text-xl font-semibold">{mod.title}</h2>
+                  <p className="mb-4 text-sm text-muted-foreground">{mod.description}</p>
+                  <ul className="mb-4 space-y-2">
+                    {mod.features.map((feat) => (
+                      <li
+                        key={feat}
+                        className="flex items-start gap-2 text-sm text-muted-foreground"
+                      >
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                        {feat}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-xs text-muted-foreground border-t border-border/50 pt-3 mb-4">
+                    Usage: {mod.limits}
+                  </p>
+                  <Link href={mod.href}>
+                    <Button variant="outline" className="gap-2">
+                      Try it now
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
               </div>
               <div
                 className={`hidden md:flex items-center justify-center ${
                   index % 2 === 1 ? "md:order-1" : ""
                 }`}
               >
-                <div className="flex h-48 w-48 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5">
-                  <Icon className="h-20 w-20 text-primary/60" />
+                <div className={`flex h-48 w-48 items-center justify-center rounded-full text-white/60 shadow-glow ${mod.gradient}`}>
+                  <Icon className="h-20 w-20" />
                 </div>
               </div>
             </div>
@@ -147,8 +138,10 @@ export default function FeaturesPage() {
         })}
       </div>
 
-      <div className="mx-auto mt-20 max-w-2xl rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 p-12 text-center">
-        <Shield className="mx-auto mb-4 h-10 w-10 text-primary" />
+      <div className="mx-auto mt-20 max-w-2xl glass rounded-2xl p-12 text-center">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl gradient-primary shadow-glow-sm">
+          <Shield className="h-6 w-6 text-white" />
+        </div>
         <h2 className="mb-4 text-2xl font-bold">
           Not sure where to start?
         </h2>

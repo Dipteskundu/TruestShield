@@ -10,7 +10,7 @@ const features = [
     id: "spam",
     icon: Mail,
     title: "Spam & Scam Text Detection",
-    color: "from-blue-500 to-cyan-500",
+    gradient: "gradient-primary",
     items: [
       "Detect phishing emails with spoofed sender domains",
       "Spot fake job postings with unrealistic salary promises",
@@ -23,7 +23,7 @@ const features = [
     id: "url",
     icon: Link2,
     title: "URL / Link Scanner",
-    color: "from-purple-500 to-pink-500",
+    gradient: "gradient-accent",
     items: [
       "Unshorten and trace full redirect chains",
       "WHOIS lookup for domain registration age",
@@ -37,7 +37,7 @@ const features = [
     id: "image",
     icon: Image,
     title: "AI Image Detection",
-    color: "from-orange-500 to-yellow-500",
+    gradient: "bg-gradient-to-br from-amber-500 to-orange-500",
     items: [
       "GAN fingerprint and diffusion artifact detection",
       "Facial blending analysis for deepfakes",
@@ -50,7 +50,7 @@ const features = [
     id: "legal",
     icon: FileText,
     title: "Legal Document Analysis",
-    color: "from-green-500 to-emerald-500",
+    gradient: "bg-gradient-to-br from-teal-500 to-emerald-500",
     items: [
       "Upload PDF or paste contract text directly",
       "Clause-by-clause plain-English breakdown",
@@ -76,7 +76,7 @@ export function FeaturesDeepDive() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-14 max-w-2xl text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
             Features in detail
           </h2>
           <p className="text-muted-foreground">
@@ -97,20 +97,15 @@ export function FeaturesDeepDive() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3 }}
-                className="rounded-lg border bg-card"
+                className="glass rounded-2xl overflow-hidden transition-all duration-300"
               >
                 <button
                   onClick={() => setOpenId(isOpen ? null : feat.id)}
                   className="flex w-full items-center justify-between p-5 text-left"
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br",
-                        feat.color
-                      )}
-                    >
-                      <Icon className="h-5 w-5 text-white" />
+                    <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl text-white", feat.gradient)}>
+                      <Icon className="h-5 w-5" />
                     </div>
                     <span className="font-semibold">{feat.title}</span>
                   </div>
@@ -131,7 +126,7 @@ export function FeaturesDeepDive() {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="border-t px-5 py-4">
+                      <div className="border-t border-border/50 px-5 py-4">
                         <ul className="space-y-2">
                           {feat.items.map((item) => (
                             <li

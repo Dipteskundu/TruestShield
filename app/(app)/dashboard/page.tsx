@@ -9,6 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ScanSearch, FileText, ShieldAlert, ArrowRight, Mail, LinkIcon, Upload } from "lucide-react";
 import api from "@/lib/api";
 
 export default function DashboardPage() {
@@ -25,63 +27,110 @@ export default function DashboardPage() {
       .catch(() => {});
   }, []);
 
+  const statCards = [
+    {
+      label: "Total Scans",
+      value: stats.totalScans,
+      icon: ScanSearch,
+      gradient: "from-emerald-500 to-teal-400",
+    },
+    {
+      label: "Documents Analyzed",
+      value: stats.documentsAnalyzed,
+      icon: FileText,
+      gradient: "from-teal-500 to-cyan-400",
+    },
+    {
+      label: "Fraud Caught",
+      value: stats.fraudCaught,
+      icon: ShieldAlert,
+      gradient: "from-rose-500 to-pink-400",
+    },
+  ];
+
+  const quickActions = [
+    {
+      label: "Email Scan",
+      description: "Detect phishing and spoofed senders",
+      href: "/scan/email",
+      icon: Mail,
+    },
+    {
+      label: "URL Scan",
+      description: "Verify links before you click",
+      href: "/scan/url",
+      icon: LinkIcon,
+    },
+    {
+      label: "Document Analysis",
+      description: "Analyze contracts in plain English",
+      href: "/documents/upload",
+      icon: Upload,
+    },
+  ];
+
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Welcome back
+        </h1>
         <p className="text-muted-foreground">
           Your trust verification activity at a glance.
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">{stats.totalScans}</CardTitle>
-            <CardDescription>Total scans</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">{stats.documentsAnalyzed}</CardTitle>
-            <CardDescription>Documents analyzed</CardDescription>
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">{stats.fraudCaught}</CardTitle>
-            <CardDescription>Dangerous items caught</CardDescription>
-          </CardHeader>
-        </Card>
+        {statCards.map((stat) => (
+          <Card key={stat.label} className="relative overflow-hidden group">
+            <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-5 group-hover:opacity-10 transition-opacity`} />
+            <CardHeader className="relative">
+              <div className="flex items-center justify-between">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${stat.gradient} text-white shadow-lg`}>
+                  <stat.icon className="h-5 w-5" />
+                </div>
+              </div>
+              <CardTitle className="text-3xl font-bold mt-3">{stat.value}</CardTitle>
+              <CardDescription>{stat.label}</CardDescription>
+            </CardHeader>
+          </Card>
+        ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick scan</CardTitle>
-            <CardDescription>Run a fraud or URL check</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
-            <Link href="/scan/email" className="text-sm text-primary hover:underline">
-              Email scan
-            </Link>
-            <Link href="/scan/url" className="text-sm text-primary hover:underline">
-              URL scan
-            </Link>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Documents</CardTitle>
-            <CardDescription>Analyze contracts in plain English</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/documents/upload" className="text-sm text-primary hover:underline">
-              Upload a document →
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-3">
+        {quickActions.map((action) => (
+          <Link key={action.href} href={action.href}>
+            <Card className="group cursor-pointer hover:border-primary/30 transition-all duration-300">
+              <CardContent className="p-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                    <action.icon className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold group-hover:text-primary transition-colors">{action.label}</h3>
+                    <p className="text-sm text-muted-foreground">{action.description}</p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
       </div>
+
+      <Card className="border-dashed">
+        <CardContent className="p-6 flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold">Need help getting started?</h3>
+            <p className="text-sm text-muted-foreground">Explore our features and learn how TrustShield works.</p>
+          </div>
+          <Link href="/features">
+            <Button variant="outline">
+              Learn more <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
     </div>
   );
 }

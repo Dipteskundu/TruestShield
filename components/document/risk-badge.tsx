@@ -2,20 +2,20 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { RiskLevel } from "@/types/document";
 
-const riskVariant: Record<RiskLevel, string> = {
-  low: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-  medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-  high: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+const riskStyles: Record<RiskLevel, string> = {
+  low: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300",
+  medium: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300",
+  high: "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300",
 };
 
 export function RiskBadge({ level }: { level: RiskLevel }) {
   return (
-    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize", riskVariant[level])}>
+    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize", riskStyles[level])}>
       {level} risk
     </span>
   );
 }
 
 export function RiskBadgeInline({ level }: { level: RiskLevel }) {
-  return <Badge variant="outline" className={cn("capitalize", riskVariant[level])}>{level}</Badge>;
+  return <Badge variant="outline" className={cn("capitalize", riskStyles[level])}>{level}</Badge>;
 }

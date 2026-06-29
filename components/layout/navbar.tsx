@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Shield, Menu, X } from "lucide-react";
+import { Shield, Menu, X, LayoutDashboard, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ProfileDropdown } from "./profile-dropdown";
 
 const navLinks = [
   { href: "/features", label: "Features" },
@@ -18,35 +20,36 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full glass-strong border-b-0">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <Shield className="h-6 w-6 text-primary" />
-          TrustShield
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <div className="relative">
+            <div className="absolute inset-0 gradient-primary rounded-lg opacity-20 blur-sm group-hover:opacity-40 transition-opacity" />
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
+              <Shield className="h-4.5 w-4.5 text-white" />
+            </div>
+          </div>
+          <span className="text-lg font-bold tracking-tight">
+            Trust<span className="text-gradient">Shield</span>
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="relative px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
             >
               {link.label}
+              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-0 gradient-primary rounded-full group-hover:w-4/5 transition-all duration-300" />
             </Link>
           ))}
+        </nav>
+
+        <div className="hidden items-center gap-2 md:flex">
           {session ? (
-            <>
-              <Link
-                href="/dashboard"
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Dashboard
-              </Link>
-              <Button variant="outline" size="sm" onClick={() => signOut()}>
-                Sign out
-              </Button>
-            </>
+            <ProfileDropdown />
           ) : (
             <>
               <Link href="/auth/login">
@@ -55,59 +58,89 @@ export function Navbar() {
                 </Button>
               </Link>
               <Link href="/auth/signup">
-                <Button size="sm">Sign up</Button>
+                <Button size="sm">
+                  Get started free
+                </Button>
               </Link>
             </>
           )}
-        </nav>
+        </div>
 
         <button
-          className="md:hidden"
+          className="md:hidden flex h-10 w-10 items-center justify-center rounded-xl hover:bg-primary/5 transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {mobileOpen && (
-        <div className="border-t md:hidden">
-          <nav className="flex flex-col gap-2 px-4 py-4">
+        <div className="glass-strong border-t md:hidden">
+          <nav className="flex flex-col gap-1 px-4 py-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                className="rounded-xl px-4 py-2.5 text-sm text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-all"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
+            <div className="my-2 h-px bg-border" />
             {session ? (
               <>
+                <div className="flex items-center gap-3 px-4 py-2.5 mb-1">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full gradient-primary text-xs font-bold text-white">
+                    {(session.user?.name || session.user?.email || "U")
+                      .split(" ")
+                      .map((w: string) => w[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">{session.user?.name || "User"}</p>
+                    <p className="text-xs text-muted-foreground truncate">{session.user?.email}</p>
+                  </div>
+                </div>
                 <Link
                   href="/dashboard"
-                  className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                  className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-all"
                   onClick={() => setMobileOpen(false)}
                 >
+                  <LayoutDashboard className="h-4 w-4" />
                   Dashboard
                 </Link>
-                <Button variant="outline" size="sm" onClick={() => signOut()}>
+                <Link
+                  href="/dashboard/settings"
+                  className="flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-all"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Settings
+                </Link>
+                <div className="h-px bg-border/50 my-1" />
+                <button
+                  className="flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm text-muted-foreground hover:bg-destructive/5 hover:text-destructive transition-all"
+                  onClick={() => { signOut(); setMobileOpen(false); }}
+                >
+                  <LogOut className="h-4 w-4" />
                   Sign out
-                </Button>
+                </button>
               </>
             ) : (
               <>
                 <Link
                   href="/auth/login"
-                  className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                  className="rounded-xl px-4 py-2.5 text-sm text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-all"
                   onClick={() => setMobileOpen(false)}
                 >
                   Log in
                 </Link>
                 <Link href="/auth/signup" onClick={() => setMobileOpen(false)}>
-                  <Button size="sm" className="w-full">
-                    Sign up
+                  <Button size="sm" className="w-full mt-2">
+                    Get started free
                   </Button>
                 </Link>
               </>

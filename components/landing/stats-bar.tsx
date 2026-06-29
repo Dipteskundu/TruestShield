@@ -55,9 +55,11 @@ export function StatsBar() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="flex flex-col items-center gap-2 text-center"
+                className="glass flex flex-col items-center gap-3 rounded-2xl py-6 text-center"
               >
-                <Icon className="h-6 w-6 text-primary" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary">
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
                 <p className="text-3xl font-bold">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </p>

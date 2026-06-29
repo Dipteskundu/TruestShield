@@ -47,7 +47,7 @@ export function SecuritySection() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-14 max-w-2xl text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
             Security & Privacy
           </h2>
           <p className="text-muted-foreground">
@@ -65,10 +65,10 @@ export function SecuritySection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.05 }}
-                className="flex flex-col items-center rounded-lg border bg-card p-6 text-center"
+                className="glass group flex flex-col items-center rounded-2xl p-6 text-center transition-all duration-300 hover:shadow-glass-sm"
               >
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Icon className="h-6 w-6 text-primary" />
+                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl gradient-primary shadow-glow-sm transition-transform group-hover:scale-110">
+                  <Icon className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="mb-1 font-semibold">{item.title}</h3>
                 <p className="text-sm text-muted-foreground">

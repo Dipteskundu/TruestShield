@@ -1,4 +1,4 @@
-import { Shield, Target, Eye, Heart } from "lucide-react";
+import { Shield, Target, Eye, Heart, Zap } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -32,11 +32,11 @@ export default function AboutPage() {
     <div className="container mx-auto px-4 py-16">
       <div className="mx-auto max-w-3xl text-center">
         <div className="mb-6 flex justify-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-            <Shield className="h-8 w-8 text-primary" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl gradient-primary shadow-glow">
+            <Shield className="h-8 w-8 text-white" />
           </div>
         </div>
-        <h1 className="mb-4 text-4xl font-bold">About TrustShield</h1>
+        <h1 className="mb-4 text-4xl font-bold tracking-tight">About TrustShield</h1>
         <p className="text-lg text-muted-foreground">
           We started with a simple question: why is it so hard to know what
           you&apos;re agreeing to?
@@ -50,8 +50,11 @@ export default function AboutPage() {
           exact same underlying pattern:
         </p>
 
-        <div className="rounded-lg border bg-muted/30 p-6 text-sm">
-          <p className="font-medium text-foreground mb-2">The pattern:</p>
+        <div className="glass rounded-2xl p-6 text-sm">
+          <p className="font-medium text-foreground mb-2 flex items-center gap-2">
+            <Zap className="h-4 w-4 text-primary" />
+            The pattern:
+          </p>
           <ol className="space-y-1 list-decimal list-inside">
             <li>User submits content (text / link / image / document)</li>
             <li>AI analyzes it</li>
@@ -79,10 +82,10 @@ export default function AboutPage() {
         {values.map((value) => {
           const Icon = value.icon;
           return (
-            <div key={value.title} className="rounded-lg border bg-card p-6 text-center">
+            <div key={value.title} className="glass rounded-2xl p-6 text-center transition-all hover:shadow-glass-sm">
               <div className="mb-4 flex justify-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <Icon className="h-6 w-6 text-primary" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-primary shadow-glow-sm">
+                  <Icon className="h-6 w-6 text-white" />
                 </div>
               </div>
               <h3 className="mb-2 font-semibold">{value.title}</h3>
@@ -92,7 +95,7 @@ export default function AboutPage() {
         })}
       </div>
 
-      <div className="mx-auto mt-16 max-w-2xl rounded-lg border bg-muted/30 p-8 text-center">
+      <div className="mx-auto mt-16 max-w-2xl glass rounded-2xl p-8 text-center">
         <h2 className="mb-4 text-2xl font-bold">The Tech</h2>
         <p className="text-sm text-muted-foreground mb-6">
           Built with Next.js 14, Express.js, Claude API, and MongoDB Atlas. One
@@ -103,7 +106,7 @@ export default function AboutPage() {
             (tech) => (
               <span
                 key={tech}
-                className="rounded-full border bg-background px-3 py-1 text-xs font-medium"
+                className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary"
               >
                 {tech}
               </span>

@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UploadDropzone } from "@/components/document/upload-dropzone";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DOCUMENT_TYPES } from "@/lib/constants";
 import api from "@/lib/api";
+import { FileText, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 
 export default function DocumentUploadPage() {
   const router = useRouter();
@@ -13,10 +15,12 @@ export default function DocumentUploadPage() {
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     try {
       const formData = new FormData();
@@ -33,7 +37,7 @@ export default function DocumentUploadPage() {
 
       router.push(`/documents/${data.data.id}`);
     } catch {
-      alert("Upload failed. Make sure you are logged in and text is at least 50 characters.");
+      setError("Upload failed. Make sure you are logged in and text is at least 50 characters.");
     } finally {
       setLoading(false);
     }
@@ -41,20 +45,32 @@ export default function DocumentUploadPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Analyze a document</h1>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary">
+            <FileText className="h-5 w-5 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Analyze a document</h1>
+        </div>
         <p className="text-muted-foreground">
           Upload a PDF or paste contract text. TrustShield is not legal advice.
         </p>
       </div>
 
+      {error && (
+        <div className="glass flex items-center gap-3 rounded-xl border border-destructive/20 p-4 text-sm text-destructive">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {error}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="mb-2 block text-sm font-medium">Document type</label>
+          <label className="mb-2 block text-sm font-semibold">Document type</label>
           <select
             value={documentType}
             onChange={(e) => setDocumentType(e.target.value)}
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            className="glass flex h-12 w-full rounded-xl border border-border/50 bg-transparent px-4 py-2 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
           >
             {DOCUMENT_TYPES.map(({ value, label }) => (
               <option key={value} value={value}>
@@ -66,20 +82,28 @@ export default function DocumentUploadPage() {
 
         <UploadDropzone onFileSelect={setFile} />
         {file && (
-          <p className="text-sm text-muted-foreground">Selected: {file.name}</p>
+          <div className="glass flex items-center gap-2 rounded-xl border border-emerald-500/20 p-3 text-sm text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 className="h-4 w-4" />
+            Selected: {file.name}
+          </div>
         )}
 
         <div>
-          <label className="mb-2 block text-sm font-medium">Or paste text</label>
+          <label className="mb-2 block text-sm font-semibold">Or paste text</label>
           <textarea
-            className="flex min-h-[150px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            className="glass min-h-[150px] w-full rounded-xl border border-border/50 bg-transparent px-4 py-3 text-sm transition-all placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50"
             placeholder="Paste contract text here (min 50 characters)..."
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
         </div>
 
-        <Button type="submit" disabled={loading || (!file && text.length < 50)}>
+        <Button type="submit" disabled={loading || (!file && text.length < 50)} className="w-full" size="lg">
+          {loading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <FileText className="mr-2 h-4 w-4" />
+          )}
           {loading ? "Uploading..." : "Analyze document"}
         </Button>
       </form>

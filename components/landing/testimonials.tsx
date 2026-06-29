@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Quote } from "lucide-react";
+import { Quote, Star } from "lucide-react";
 
 const testimonials = [
   {
@@ -35,7 +35,7 @@ export function Testimonials() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-14 max-w-2xl text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
             Trusted by users like you
           </h2>
           <p className="text-muted-foreground">
@@ -51,13 +51,18 @@ export function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="relative rounded-lg border bg-card p-6"
+              className="glass relative rounded-2xl p-6 transition-all duration-300 hover:shadow-glass-sm"
             >
-              <Quote className="mb-3 h-6 w-6 text-primary/40" />
+              <div className="mb-3 flex gap-0.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star key={star} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <Quote className="mb-3 h-6 w-6 text-primary/30" />
               <p className="mb-4 text-sm text-muted-foreground leading-relaxed">
                 &ldquo;{item.quote}&rdquo;
               </p>
-              <div>
+              <div className="border-t border-border/50 pt-4">
                 <p className="text-sm font-semibold">{item.name}</p>
                 <p className="text-xs text-muted-foreground">{item.role}</p>
               </div>

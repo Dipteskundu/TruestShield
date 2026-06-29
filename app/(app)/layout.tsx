@@ -1,14 +1,21 @@
-import { Navbar } from "@/components/layout/navbar";
+"use client";
+
+import { useState } from "react";
+import { TopBar } from "@/components/layout/top-bar";
 import { AppSidebar } from "@/components/layout/app-sidebar";
+import { MobileSidebar } from "@/components/layout/mobile-sidebar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
+      <TopBar onMenuClick={() => setSidebarOpen(true)} />
       <div className="flex flex-1">
         <AppSidebar />
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 p-6 pb-20 md:pb-6">{children}</main>
       </div>
+      <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </div>
   );
 }

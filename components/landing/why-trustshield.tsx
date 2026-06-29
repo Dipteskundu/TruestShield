@@ -41,7 +41,7 @@ export function WhyTrustShield() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-14 max-w-2xl text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
             Why TrustShield?
           </h2>
           <p className="text-muted-foreground">
@@ -60,10 +60,10 @@ export function WhyTrustShield() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="flex gap-4 rounded-lg border bg-card p-6"
+                className="glass group flex gap-4 rounded-2xl p-6 transition-all duration-300 hover:shadow-glass-sm"
               >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                  <Icon className="h-6 w-6 text-primary" />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl gradient-primary shadow-glow-sm transition-transform group-hover:scale-110">
+                  <Icon className="h-6 w-6 text-white" />
                 </div>
                 <div>
                   <h3 className="mb-1 font-semibold">{benefit.title}</h3>

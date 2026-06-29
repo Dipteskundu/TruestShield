@@ -35,7 +35,7 @@ export function HowItWorks() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-14 max-w-2xl text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
             How it works
           </h2>
           <p className="text-muted-foreground">
@@ -58,11 +58,13 @@ export function HowItWorks() {
                 {index < steps.length - 1 && (
                   <div className="absolute right-0 top-8 hidden h-px w-full -translate-y-1/2 border-t border-dashed border-muted-foreground/30 md:block md:translate-x-1/2" />
                 )}
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                  <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                <div className="relative mb-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl gradient-primary shadow-glow-sm">
+                    <Icon className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-background border-2 border-primary text-xs font-bold text-primary">
                     {index + 1}
                   </span>
-                  <Icon className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="mb-2 text-lg font-semibold">{step.title}</h3>
                 <p className="text-sm text-muted-foreground">

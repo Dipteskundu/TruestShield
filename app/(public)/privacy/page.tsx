@@ -1,3 +1,4 @@
+import { Shield } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -57,7 +58,12 @@ export default function PrivacyPage() {
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="mx-auto max-w-3xl">
-        <h1 className="mb-4 text-4xl font-bold">Privacy Policy</h1>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary">
+            <Shield className="h-5 w-5 text-white" />
+          </div>
+          <h1 className="text-4xl font-bold tracking-tight">Privacy Policy</h1>
+        </div>
         <p className="mb-8 text-muted-foreground">
           Last updated: June 2026
         </p>
@@ -73,7 +79,7 @@ export default function PrivacyPage() {
           ))}
         </div>
 
-        <div className="mt-12 rounded-lg border bg-muted/30 p-6">
+        <div className="mt-12 glass rounded-2xl p-6">
           <h3 className="mb-2 font-semibold">Contact</h3>
           <p className="text-sm text-muted-foreground">
             For privacy-related inquiries:{" "}

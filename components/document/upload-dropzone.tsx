@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Upload } from "lucide-react";
+import { Upload, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface UploadDropzoneProps {
@@ -34,12 +34,23 @@ export function UploadDropzone({
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
       className={cn(
-        "flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-12 transition-colors",
-        dragging ? "border-primary bg-primary/5" : "border-muted-foreground/25"
+        "flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 transition-all duration-300",
+        dragging
+          ? "border-primary bg-primary/5 shadow-glow-sm"
+          : "border-border/50 bg-muted/20 hover:border-primary/30 hover:bg-primary/5"
       )}
     >
-      <Upload className="mb-4 h-10 w-10 text-muted-foreground" />
-      <p className="text-sm font-medium">Drag and drop a PDF here</p>
+      <div className={cn(
+        "flex h-16 w-16 items-center justify-center rounded-2xl transition-all duration-300",
+        dragging
+          ? "gradient-primary text-white"
+          : "bg-primary/10 text-primary"
+      )}>
+        {dragging ? <FileText className="h-8 w-8" /> : <Upload className="h-8 w-8" />}
+      </div>
+      <p className="mt-4 text-sm font-medium">
+        {dragging ? "Drop your file here" : "Drag and drop a PDF here"}
+      </p>
       <p className="mt-1 text-xs text-muted-foreground">or click to browse</p>
       <input
         type="file"

@@ -45,6 +45,32 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        glass: "var(--glass-shadow)",
+        glow: "0 0 40px var(--glow-color)",
+        "glow-sm": "0 0 20px var(--glow-color)",
+        "glow-lg": "0 0 60px var(--glow-color)",
+        "card-hover": "0 20px 40px rgba(0, 0, 0, 0.08)",
+      },
+      backgroundImage: {
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-hero": "var(--gradient-hero)",
+        "gradient-accent": "var(--gradient-accent)",
+      },
+      keyframes: {
+        "float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { boxShadow: "0 0 20px var(--glow-color)" },
+          "50%": { boxShadow: "0 0 40px var(--glow-color)" },
+        },
+      },
+      animation: {
+        float: "float 6s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 3s ease-in-out infinite",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

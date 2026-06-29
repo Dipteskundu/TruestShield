@@ -16,3 +16,17 @@ export function useScanResult(id: string) {
     enabled: Boolean(id),
   });
 }
+
+export function useRecentScans(type: string, limit = 5) {
+  return useQuery({
+    queryKey: ["recent-scans", type],
+    queryFn: async () => {
+      const { data } = await api.get("/api/user/history", {
+        params: { module: type },
+      });
+      return (data.data?.scans || []).slice(0, limit);
+    },
+    enabled: Boolean(type),
+    staleTime: 30000,
+  });
+}

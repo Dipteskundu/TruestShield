@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const faqs = [
@@ -45,7 +45,11 @@ export function FAQ() {
           transition={{ duration: 0.5 }}
           className="mx-auto mb-14 max-w-2xl text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">
+            <HelpCircle className="h-3 w-3" />
+            FAQ
+          </div>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
             Frequently asked questions
           </h2>
           <p className="text-muted-foreground">
@@ -64,7 +68,7 @@ export function FAQ() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className="rounded-lg border bg-card"
+                className="glass rounded-2xl overflow-hidden"
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
@@ -88,7 +92,7 @@ export function FAQ() {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="border-t px-5 py-4">
+                      <div className="border-t border-border/50 px-5 py-4">
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           {faq.a}
                         </p>
