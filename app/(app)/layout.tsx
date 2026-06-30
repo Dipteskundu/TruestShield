@@ -11,9 +11,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <TopBar onMenuClick={() => setSidebarOpen(true)} />
-      <div className="flex flex-1">
+      <div className="flex flex-1 pt-14">
         <AppSidebar />
-        <main className="flex-1 p-6 pb-20 md:pb-6">{children}</main>
+        <main className="flex-1 p-6 pb-20 md:pb-6 md:pl-64 max-w-5xl mx-auto">{children}</main>
       </div>
       <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </div>

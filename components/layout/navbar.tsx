@@ -2,21 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import { Shield, Menu, X, LayoutDashboard, LogOut } from "lucide-react";
+import { Shield, Menu, X, LayoutDashboard, LogOut, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProfileDropdown } from "./profile-dropdown";
 
 const navLinks = [
-  { href: "/features", label: "Features" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/features", label: "Features", icon: null },
+  { href: "/pricing", label: "Pricing", icon: null },
+  { href: "/about", label: "About", icon: null },
+  { href: "/contact", label: "Contact", icon: null },
 ];
 
 export function Navbar() {
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -35,16 +38,23 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="relative px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
-            >
-              {link.label}
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-0 gradient-primary rounded-full group-hover:w-4/5 transition-all duration-300" />
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "px-3 py-2 text-sm rounded-full transition-all duration-200",
+                  isActive
+                    ? "glass text-foreground font-medium shadow-glow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-primary/5"
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
@@ -78,16 +88,25 @@ export function Navbar() {
       {mobileOpen && (
         <div className="glass-strong border-t md:hidden">
           <nav className="flex flex-col gap-1 px-4 py-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="rounded-xl px-4 py-2.5 text-sm text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-all"
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm transition-all",
+                    isActive
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-muted-foreground hover:bg-primary/5 hover:text-foreground"
+                  )}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.icon && <link.icon className="h-4 w-4" />}
+                  {link.label}
+                </Link>
+              );
+            })}
             <div className="my-2 h-px bg-border" />
             {session ? (
               <>

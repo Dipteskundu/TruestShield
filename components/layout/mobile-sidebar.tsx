@@ -18,7 +18,6 @@ const appLinks = [
   { href: "/dashboard/history", label: "History", icon: History },
   { href: "/scan/email", label: "Scan", icon: ScanSearch },
   { href: "/documents/upload", label: "Documents", icon: FileText },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
 const adminLinks = [

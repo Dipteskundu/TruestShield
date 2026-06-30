@@ -13,7 +13,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
   const { data: session } = useSession();
 
   return (
-    <header className="sticky top-0 z-40 glass-strong border-b">
+    <header className="fixed top-0 left-0 right-0 z-50 glass-strong border-b">
       <div className="flex h-14 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-3">
           <button
@@ -23,7 +23,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
           >
             <Menu className="h-5 w-5" />
           </button>
-          <Link href="/dashboard" className="flex items-center gap-2 md:hidden">
+          <Link href="/" className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg gradient-primary">
               <Shield className="h-3.5 w-3.5 text-white" />
             </div>

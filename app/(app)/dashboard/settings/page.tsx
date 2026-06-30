@@ -10,82 +10,209 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toaster";
 import api from "@/lib/api";
-import { User, Lock, CreditCard, Loader2, Save } from "lucide-react";
+import {
+  CreditCard,
+  Loader2,
+  Save,
+  Bot,
+  Plus,
+  Trash2,
+  Key,
+} from "lucide-react";
+import { AIProviderSelect } from "@/components/ai-provider-select";
+import { CustomProviderForm } from "@/components/custom-provider-form";
+
+interface ProviderModel {
+  id: string;
+  name: string;
+  description: string;
+}
+
+interface Provider {
+  id: string;
+  name: string;
+  models: ProviderModel[];
+  hasApiKey: boolean;
+}
+
+interface CustomProvider {
+  id: string;
+  name: string;
+  endpoint: string;
+  apiKey: string;
+  model: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+interface AISettings {
+  provider: string;
+  model: string | null;
+  customProviders: CustomProvider[];
+  availableProviders: Provider[];
+}
 
 export default function SettingsPage() {
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(true);
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [profileLoading, setProfileLoading] = useState(false);
-
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [aiSettings, setAISettings] = useState<AISettings | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState("system");
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [aiSettingsLoading, setAISettingsLoading] = useState(false);
+  const [showAddProvider, setShowAddProvider] = useState(false);
+  const [editingProvider, setEditingProvider] = useState<CustomProvider | null>(null);
+  const [providerLoading, setProviderLoading] = useState(false);
 
   useEffect(() => {
-    api.get("/api/user/profile").then(({ data }) => {
-      setName(data.data.name);
-      setEmail(data.data.email);
-    }).catch(() => {});
+    api.get("/api/user/ai-settings").then(({ data }) => {
+      setAISettings(data.data);
+      setSelectedProvider(data.data.provider);
+      setSelectedModel(data.data.model);
+    }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
-  async function handleProfileUpdate(e: React.FormEvent) {
-    e.preventDefault();
-    setProfileLoading(true);
+  async function handleAISettingsSave() {
+    setAISettingsLoading(true);
     try {
-      const { data } = await api.put("/api/user/profile", { name, email });
+      const { data } = await api.put("/api/user/ai-settings", {
+        provider: selectedProvider,
+        model: selectedModel,
+      });
       if (data.success) {
-        toast("Profile updated successfully", "success");
-        await update();
+        toast("AI settings updated successfully", "success");
+        setAISettings((prev) =>
+          prev ? { ...prev, provider: selectedProvider, model: selectedModel } : prev
+        );
       }
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to update profile";
+          ?.message || "Failed to update AI settings";
       toast(message, "error");
     } finally {
-      setProfileLoading(false);
+      setAISettingsLoading(false);
     }
   }
 
-  async function handlePasswordChange(e: React.FormEvent) {
-    e.preventDefault();
-
-    if (newPassword !== confirmPassword) {
-      toast("New passwords do not match", "error");
-      return;
-    }
-    if (newPassword.length < 8) {
-      toast("New password must be at least 8 characters", "error");
-      return;
-    }
-
-    setPasswordLoading(true);
+  async function handleAddCustomProvider(formData: {
+    name: string;
+    endpoint: string;
+    apiKey: string;
+    model: string;
+  }) {
+    setProviderLoading(true);
     try {
-      const { data } = await api.put("/api/user/password", {
-        currentPassword,
-        newPassword,
-      });
+      const { data } = await api.post("/api/user/ai-settings/providers", formData);
       if (data.success) {
-        toast("Password changed successfully", "success");
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
+        toast("Custom provider added successfully", "success");
+        setAISettings((prev) =>
+          prev
+            ? { ...prev, customProviders: [...prev.customProviders, data.data] }
+            : prev
+        );
+        setShowAddProvider(false);
       }
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Failed to change password";
+          ?.message || "Failed to add custom provider";
       toast(message, "error");
     } finally {
-      setPasswordLoading(false);
+      setProviderLoading(false);
     }
+  }
+
+  async function handleRemoveCustomProvider(id: string) {
+    try {
+      const { data } = await api.delete(`/api/user/ai-settings/providers/${id}`);
+      if (data.success) {
+        toast("Custom provider removed", "success");
+        setAISettings((prev) =>
+          prev
+            ? {
+                ...prev,
+                customProviders: prev.customProviders.filter((p) => p.id !== id),
+              }
+            : prev
+        );
+      }
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || "Failed to remove custom provider";
+      toast(message, "error");
+    }
+  }
+
+  async function handleTestCustomProvider(provider: CustomProvider) {
+    const { data } = await api.post("/api/user/ai-settings/providers/test", {
+      provider: "custom",
+      endpoint: provider.endpoint,
+      apiKey: provider.apiKey.replace(/\.\.\./g, ""),
+      model: provider.model,
+    });
+    return data.data || { success: false, message: "Test failed" };
+  }
+
+  const allProviders: Provider[] = [
+    {
+      id: "system",
+      name: "System Default",
+      models: [{ id: "default", name: "Default Model", description: "Platform's AI" }],
+      hasApiKey: true,
+    },
+    ...(aiSettings?.availableProviders || []),
+    {
+      id: "custom",
+      name: "Custom Provider",
+      models: [{ id: "custom", name: "User-defined", description: "Your own API" }],
+      hasApiKey: true,
+    },
+  ];
+
+  if (loading) {
+    return (
+      <div className="space-y-8 animate-pulse">
+        <div className="space-y-2">
+          <div className="h-10 w-32 rounded-lg bg-muted" />
+          <div className="h-4 w-48 rounded bg-muted" />
+        </div>
+        <div className="rounded-xl border border-border/50 p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-muted" />
+            <div className="space-y-2">
+              <div className="h-4 w-24 rounded bg-muted" />
+              <div className="h-3 w-40 rounded bg-muted" />
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <div className="h-6 w-24 rounded bg-muted" />
+              <div className="h-4 w-48 rounded bg-muted" />
+            </div>
+            <div className="h-10 w-32 rounded-lg bg-muted" />
+          </div>
+        </div>
+        <div className="rounded-xl border border-border/50 p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-muted" />
+            <div className="space-y-2">
+              <div className="h-4 w-24 rounded bg-muted" />
+              <div className="h-3 w-56 rounded bg-muted" />
+            </div>
+          </div>
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-16 rounded-xl bg-muted" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -94,104 +221,6 @@ export default function SettingsPage() {
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
         <p className="text-muted-foreground">Manage your TrustShield account.</p>
       </div>
-
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-              <User className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <CardTitle>Profile</CardTitle>
-              <CardDescription>Update your name and email address.</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleProfileUpdate} className="space-y-4 max-w-md">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Name</label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Email</label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" disabled={profileLoading}>
-              {profileLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Save className="mr-2 h-4 w-4" />
-              )}
-              {profileLoading ? "Saving..." : "Save changes"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10">
-              <Lock className="h-5 w-5 text-accent" />
-            </div>
-            <div>
-              <CardTitle>Password</CardTitle>
-              <CardDescription>Change your account password.</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Current password</label>
-              <Input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">New password</label>
-              <Input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                minLength={8}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Confirm new password</label>
-              <Input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                minLength={8}
-                required
-              />
-            </div>
-            <Button type="submit" disabled={passwordLoading}>
-              {passwordLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Lock className="mr-2 h-4 w-4" />
-              )}
-              {passwordLoading ? "Changing..." : "Change password"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
 
       <Card>
         <CardHeader>
@@ -219,6 +248,130 @@ export default function SettingsPage() {
               Upgrade (coming soon)
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-400 text-white">
+              <Bot className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle>AI Provider</CardTitle>
+              <CardDescription>
+                Configure which AI powers your scans and analysis.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <AIProviderSelect
+            providers={allProviders}
+            selectedProvider={selectedProvider}
+            selectedModel={selectedModel}
+            onProviderChange={setSelectedProvider}
+            onModelChange={setSelectedModel}
+          />
+
+          <Button onClick={handleAISettingsSave} disabled={aiSettingsLoading}>
+            {aiSettingsLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="mr-2 h-4 w-4" />
+            )}
+            {aiSettingsLoading ? "Saving..." : "Save Preferences"}
+          </Button>
+
+          {selectedProvider === "custom" && (
+            <div className="space-y-4 border-t border-border pt-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium">Custom Providers</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Add your own OpenAI-compatible API endpoints.
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setShowAddProvider(true);
+                    setEditingProvider(null);
+                  }}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Provider
+                </Button>
+              </div>
+
+              {showAddProvider && !editingProvider && (
+                <CustomProviderForm
+                  onSave={handleAddCustomProvider}
+                  onCancel={() => setShowAddProvider(false)}
+                  isLoading={providerLoading}
+                />
+              )}
+
+              {aiSettings?.customProviders && aiSettings.customProviders.length > 0 && (
+                <div className="space-y-3">
+                  {aiSettings.customProviders.map((provider) => (
+                    <div
+                      key={provider.id}
+                      className="flex items-center justify-between rounded-xl border p-4"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                          <Key className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-medium">{provider.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {provider.endpoint} &middot; {provider.model}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Key: {provider.apiKey}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setEditingProvider(provider);
+                            setShowAddProvider(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveCustomProvider(provider.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {(!aiSettings?.customProviders || aiSettings.customProviders.length === 0) && !showAddProvider && (
+                <div className="rounded-xl border border-dashed p-8 text-center">
+                  <Key className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    No custom providers added yet.
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Add your own OpenAI-compatible API to use with TrustShield.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

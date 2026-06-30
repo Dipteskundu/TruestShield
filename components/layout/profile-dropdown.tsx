@@ -3,13 +3,23 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { User, Settings, LayoutDashboard, LogOut, ChevronDown } from "lucide-react";
+import { User, Settings, LayoutDashboard, LogOut, ChevronDown, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import api from "@/lib/api";
 
 export function ProfileDropdown() {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const [avatar, setAvatar] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (session?.user) {
+      api.get("/api/user/profile").then(({ data }) => {
+        setAvatar(data.data.avatar || null);
+      }).catch(() => {});
+    }
+  }, [session?.user]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -36,8 +46,12 @@ export function ProfileDropdown() {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:bg-primary/5"
       >
-        <div className="flex h-8 w-8 items-center justify-center rounded-full gradient-primary text-xs font-bold text-white">
-          {initials}
+        <div className="flex h-8 w-8 items-center justify-center rounded-full gradient-primary text-xs font-bold text-white overflow-hidden">
+          {avatar ? (
+            <img src={avatar} alt="Avatar" className="h-full w-full object-cover" />
+          ) : (
+            initials
+          )}
         </div>
         <ChevronDown
           className={cn(
@@ -61,6 +75,14 @@ export function ProfileDropdown() {
           >
             <LayoutDashboard className="h-4 w-4" />
             Dashboard
+          </Link>
+          <Link
+            href="/dashboard/profile"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-all"
+          >
+            <UserCircle className="h-4 w-4" />
+            Profile Information
           </Link>
           <Link
             href="/dashboard/settings"

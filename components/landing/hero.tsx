@@ -60,7 +60,7 @@ export function Hero() {
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
-            <Link href="/scan/email">
+            <Link href="/auth/login">
               <Button size="lg" variant="outline" className="px-8">
                 Try a scan
               </Button>
