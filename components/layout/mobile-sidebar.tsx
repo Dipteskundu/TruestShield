@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Activity,
+  ClipboardList,
   FileText,
   History,
   LayoutDashboard,
@@ -17,6 +18,7 @@ import { cn } from "@/lib/utils";
 const appLinks = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/usage", label: "Usage", icon: Activity },
+  { href: "/dashboard/activity", label: "Activity", icon: ClipboardList },
   { href: "/dashboard/history", label: "History", icon: History },
   { href: "/scan/email", label: "Scan", icon: ScanSearch },
   { href: "/documents/upload", label: "Documents", icon: FileText },
