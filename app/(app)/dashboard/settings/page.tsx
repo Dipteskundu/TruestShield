@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -20,6 +21,7 @@ import {
   Plus,
   Trash2,
   Key,
+  BarChart3,
 } from "lucide-react";
 import { AIProviderSelect } from "@/components/ai-provider-select";
 import { CustomProviderForm } from "@/components/custom-provider-form";
@@ -241,12 +243,20 @@ export default function SettingsPage() {
                 {(session?.user as { plan?: string })?.plan || "free"} plan
               </p>
               <p className="text-sm text-muted-foreground">
-                50 text, 30 URL, 20 image scans per day.
+                View detailed usage breakdowns and limits.
               </p>
             </div>
-            <Button variant="outline" disabled>
-              Upgrade (coming soon)
-            </Button>
+            <div className="flex items-center gap-2">
+              <Link href="/dashboard/usage">
+                <Button variant="outline" size="sm">
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  View Usage
+                </Button>
+              </Link>
+              <Button variant="outline" disabled>
+                Upgrade (coming soon)
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
