@@ -8,6 +8,7 @@ import { SCAN_TYPES, type ScanType } from "@/lib/constants";
 import { ScanInput } from "@/components/scan/scan-input";
 import { ConfidenceGauge } from "@/components/scan/confidence-gauge";
 import { ReasonList } from "@/components/scan/reason-list";
+import { UrlMetadata } from "@/components/scan/url-metadata";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -287,6 +288,9 @@ export default function ScanPage({ params }: { params: { type: string } }) {
               <h3 className="mb-3 font-semibold">Why we flagged this</h3>
               <ReasonList reasons={result.reasons} />
             </div>
+            {type === "url" && result.metadata && Object.keys(result.metadata).length > 0 && (
+              <UrlMetadata metadata={result.metadata} verdict={result.verdict} />
+            )}
             <Button variant="outline" className="w-full" onClick={clearResult}>
               <RefreshCw className="mr-2 h-4 w-4" />
               Scan another

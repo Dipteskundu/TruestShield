@@ -3,6 +3,7 @@
 import { useScanResult } from "@/hooks/use-scan-result";
 import { ConfidenceGauge } from "@/components/scan/confidence-gauge";
 import { ReasonList } from "@/components/scan/reason-list";
+import { UrlMetadata } from "@/components/scan/url-metadata";
 import { VERDICT_COLORS } from "@/lib/constants";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -41,6 +42,11 @@ export default function PublicResultPage({ params }: { params: { id: string } })
       </div>
       <h2 className="mb-4 font-semibold">Why we flagged this</h2>
       <ReasonList reasons={data.reasons} />
+      {data.type === "url" && data.metadata && Object.keys(data.metadata).length > 0 && (
+        <div className="mt-8">
+          <UrlMetadata metadata={data.metadata} verdict={data.verdict} />
+        </div>
+      )}
     </div>
   );
 }
