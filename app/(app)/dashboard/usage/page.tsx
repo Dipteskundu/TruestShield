@@ -18,35 +18,30 @@ import {
   Clock,
   Crown,
   FileText,
-  Mail,
-  LinkIcon,
-  Image,
   ArrowRight,
-  Shield,
-  ShieldAlert,
-  ShieldCheck,
   TrendingUp,
 } from "lucide-react";
 
-interface UsageCount {
-  used: number;
-  limit: number | null;
-  remaining: number | null;
-  note?: string;
-}
-
 interface UsageData {
   plan: string;
-  limits: { text: number; url: number; image: number; documents: number | null };
-  daily: {
-    text: UsageCount;
-    url: UsageCount;
-    image: UsageCount;
-    documents: UsageCount;
+  limits: { weeklyCredits: number | null; documents: number | null };
+  weekly: {
+    used: number;
+    limit: number | null;
+    remaining: number | null;
+    text: number;
+    url: number;
+    image: number;
+    total: number;
   };
-  weekly: { text: number; url: number; image: number; total: number };
   monthly: { text: number; url: number; image: number; total: number; documents: number };
   allTime: { text: number; url: number; image: number; total: number; documents: number };
+  documents: {
+    used: number;
+    limit: number | null;
+    remaining: number | null;
+    note: string;
+  };
   recentActivity: Array<{
     id: string;
     category: "scan" | "document";
@@ -90,53 +85,6 @@ function ProgressBar({
       />
     </div>
   );
-}
-
-function VerdictBadge({ verdict }: { verdict: string }) {
-  if (verdict === "safe") {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
-        <ShieldCheck className="h-3 w-3" />
-        Safe
-      </span>
-    );
-  }
-  if (verdict === "suspicious") {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
-        <Shield className="h-3 w-3" />
-        Suspicious
-      </span>
-    );
-  }
-  if (verdict === "dangerous") {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/50 dark:text-red-300">
-        <ShieldAlert className="h-3 w-3" />
-        Dangerous
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
-      --
-    </span>
-  );
-}
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHrs = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHrs < 24) return `${diffHrs}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 export default function UsagePage() {
@@ -214,8 +162,7 @@ export default function UsagePage() {
 
   const isPro = data.plan === "pro";
 
-  const dailyScanTotal =
-    data.daily.text.used + data.daily.url.used + data.daily.image.used;
+  const weeklyScanTotal = data.weekly.text + data.weekly.url + data.weekly.image;
 
   return (
     <div className="space-y-8">
@@ -244,8 +191,8 @@ export default function UsagePage() {
                 <Activity className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle>Today&apos;s Scans</CardTitle>
-                <CardDescription>Daily usage across all scan types</CardDescription>
+                <CardTitle>Weekly Credits</CardTitle>
+                <CardDescription>Shared across all scan types</CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -253,48 +200,18 @@ export default function UsagePage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span>Text Scans</span>
+                  <Activity className="h-4 w-4 text-muted-foreground" />
+                  <span>Credits Used</span>
                 </div>
                 <span className="font-medium tabular-nums">
-                  {data.daily.text.used} / {data.daily.text.limit}
+                  {data.weekly.used} / {data.weekly.limit ?? "\u221E"}
                 </span>
               </div>
-              <ProgressBar used={data.daily.text.used} limit={data.daily.text.limit} />
+              <ProgressBar used={data.weekly.used} limit={data.weekly.limit} />
               <p className="text-xs text-muted-foreground">
-                {data.daily.text.remaining} remaining today
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <LinkIcon className="h-4 w-4 text-muted-foreground" />
-                  <span>URL Scans</span>
-                </div>
-                <span className="font-medium tabular-nums">
-                  {data.daily.url.used} / {data.daily.url.limit}
-                </span>
-              </div>
-              <ProgressBar used={data.daily.url.used} limit={data.daily.url.limit} />
-              <p className="text-xs text-muted-foreground">
-                {data.daily.url.remaining} remaining today
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <Image className="h-4 w-4 text-muted-foreground" />
-                  <span>Image Scans</span>
-                </div>
-                <span className="font-medium tabular-nums">
-                  {data.daily.image.used} / {data.daily.image.limit}
-                </span>
-              </div>
-              <ProgressBar used={data.daily.image.used} limit={data.daily.image.limit} />
-              <p className="text-xs text-muted-foreground">
-                {data.daily.image.remaining} remaining today
+                {data.weekly.remaining !== null
+                  ? `${data.weekly.remaining} remaining this week`
+                  : "Unlimited credits"}
               </p>
             </div>
 
@@ -305,21 +222,21 @@ export default function UsagePage() {
                   <span>Documents</span>
                 </div>
                 <span className="font-medium tabular-nums">
-                  {data.daily.documents.used} / {data.daily.documents.limit ?? "\u221E"}
+                  {data.documents.used} / {data.documents.limit ?? "\u221E"}
                 </span>
               </div>
-              <ProgressBar used={data.daily.documents.used} limit={data.daily.documents.limit} />
+              <ProgressBar used={data.documents.used} limit={data.documents.limit} />
               <p className="text-xs text-muted-foreground">
-                {data.daily.documents.note || `${data.daily.documents.remaining} remaining today`}
+                {data.documents.note}
               </p>
             </div>
 
             <div className="rounded-xl bg-muted/50 p-3 text-center">
               <p className="text-sm text-muted-foreground">
-                <span className="font-semibold text-foreground">{dailyScanTotal}</span> scans used today
-                {dailyScanTotal > 0 && data.daily.text.limit && (
+                <span className="font-semibold text-foreground">{weeklyScanTotal}</span> scans used this week
+                {weeklyScanTotal > 0 && data.weekly.limit && (
                   <span className="text-muted-foreground">
-                    {" "}({Math.round((dailyScanTotal / (data.daily.text.limit + (data.daily.url.limit ?? 0) + (data.daily.image.limit ?? 0))) * 100)}% of daily capacity)
+                    {" "}({Math.round((weeklyScanTotal / data.weekly.limit) * 100)}% of weekly capacity)
                   </span>
                 )}
               </p>
@@ -441,70 +358,6 @@ export default function UsagePage() {
         </Card>
       )}
 
-      {data.recentActivity.length > 0 && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                <Clock className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Your latest scans and document analyses</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {data.recentActivity.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between rounded-xl border p-3 hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                        item.category === "scan" ? "bg-primary/10 text-primary" : "bg-teal-500/10 text-teal-600 dark:text-teal-400"
-                      }`}
-                    >
-                      {item.category === "scan" ? (
-                        item.type === "image" ? (
-                          <Image className="h-4 w-4" />
-                        ) : item.type === "url" ? (
-                          <LinkIcon className="h-4 w-4" />
-                        ) : (
-                          <Mail className="h-4 w-4" />
-                        )
-                      ) : (
-                        <FileText className="h-4 w-4" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">{item.detail}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.category === "scan"
-                          ? `${item.type.charAt(0).toUpperCase() + item.type.slice(1)} scan`
-                          : item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {item.verdict && <VerdictBadge verdict={item.verdict} />}
-                    {item.confidence != null && (
-                      <span className="text-xs text-muted-foreground tabular-nums">
-                        {item.confidence}%
-                      </span>
-                    )}
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {formatDate(item.date)}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }

@@ -6,13 +6,19 @@ import { notFound } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { SCAN_TYPES, type ScanType } from "@/lib/constants";
 import { ScanInput } from "@/components/scan/scan-input";
+import { ImageUploader } from "@/components/scan/image-uploader";
+import { ImageMetadata } from "@/components/scan/image-metadata";
 import { ConfidenceGauge } from "@/components/scan/confidence-gauge";
 import { ReasonList } from "@/components/scan/reason-list";
 import { UrlMetadata } from "@/components/scan/url-metadata";
+import { CreditBadge } from "@/components/scan/credit-badge";
+import { LoginPromptDialog } from "@/components/scan/login-prompt-dialog";
+import { UpgradePromptDialog } from "@/components/scan/upgrade-prompt-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { VERDICT_COLORS } from "@/lib/constants";
+import { canGuestScan, incrementGuestCredits, getGuestCreditsUsed } from "@/lib/guest-credits";
 import api from "@/lib/api";
 import type { ScanResult } from "@/types/scan";
 import { Copy, RefreshCw, Share2, AlertCircle, Loader2, Clock, Info } from "lucide-react";
@@ -35,10 +41,14 @@ export default function ScanPage({ params }: { params: { type: string } }) {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ScanResult | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [remaining, setRemaining] = useState<number | null>(null);
   const [copying, setCopying] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+
+  const isGuest = !session?.user;
+  const isPro = (session?.user as { plan?: string })?.plan === "pro";
 
   if (!validTypes.includes(type)) {
     notFound();
@@ -52,6 +62,10 @@ export default function ScanPage({ params }: { params: { type: string } }) {
         const key = type === "url" ? "url" : type === "image" ? "image" : "text";
         setRemaining(data.data[key]);
       }).catch(() => {});
+    } else {
+      // Guest: compute remaining from localStorage
+      const used = getGuestCreditsUsed(type);
+      setRemaining(2 - used);
     }
   }, [session, type]);
 
@@ -61,11 +75,32 @@ export default function ScanPage({ params }: { params: { type: string } }) {
 
   function clearResult() {
     setResult(null);
-    setImageFile(null);
     setError("");
   }
 
+  function checkCredits(): boolean {
+    if (isPro) return true;
+
+    if (isGuest) {
+      if (!canGuestScan(type)) {
+        setShowLoginPrompt(true);
+        return false;
+      }
+      return true;
+    }
+
+    // Registered free user
+    if (remaining !== null && remaining <= 0) {
+      setShowUpgradePrompt(true);
+      return false;
+    }
+
+    return true;
+  }
+
   async function handleTextSubmit(content: string) {
+    if (!checkCredits()) return;
+
     setLoading(true);
     setResult(null);
     setError("");
@@ -81,34 +116,17 @@ export default function ScanPage({ params }: { params: { type: string } }) {
         });
         setResult(data.data);
       }
+
+      if (isGuest) {
+        incrementGuestCredits(type);
+        setRemaining(2 - (getGuestCreditsUsed(type) + 1));
+      } else if (!isPro) {
+        setRemaining((prev) => (prev !== null ? prev - 1 : prev));
+      }
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data
           ?.message || "Scan failed. Please try again.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleImageScan() {
-    if (!imageFile) return;
-    setLoading(true);
-    setResult(null);
-    setError("");
-
-    const formData = new FormData();
-    formData.append("image", imageFile);
-
-    try {
-      const { data } = await api.post("/api/scan/image", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setResult(data.data);
-    } catch (err: unknown) {
-      const message =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || "Image scan failed. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
@@ -143,11 +161,7 @@ export default function ScanPage({ params }: { params: { type: string } }) {
           </div>
           <p className="text-muted-foreground">{config.description}</p>
         </div>
-        {remaining !== null && (
-          <Badge variant="outline" className="shrink-0">
-            {remaining} left today
-          </Badge>
-        )}
+        <CreditBadge remaining={remaining} limit={isGuest ? 2 : 20} isGuest={isGuest} isPro={isPro} />
       </div>
 
       <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm text-primary/80 backdrop-blur-sm">
@@ -200,37 +214,21 @@ export default function ScanPage({ params }: { params: { type: string } }) {
       {!result && (
         <>
           {type === "image" ? (
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center justify-center w-full">
-                  <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border/50 rounded-xl bg-muted/20 hover:bg-primary/5 hover:border-primary/30 transition-all cursor-pointer">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <span className="text-3xl mb-2">🖼️</span>
-                      <p className="text-sm text-muted-foreground">
-                        {imageFile ? imageFile.name : "Click to upload an image"}
-                      </p>
-                      <p className="text-xs text-muted-foreground/60 mt-1">
-                        JPEG, PNG, WebP
-                      </p>
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                      className="hidden"
-                      disabled={loading}
-                    />
-                  </label>
-                </div>
-                <Button onClick={handleImageScan} disabled={!imageFile || loading} size="lg" className="w-full">
-                  {loading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    "Scan Image"
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
+            <ImageUploader
+              onResult={(data) => {
+                setResult(data);
+                if (isGuest) {
+                  incrementGuestCredits(type);
+                  setRemaining(2 - (getGuestCreditsUsed(type) + 1));
+                } else if (!isPro) {
+                  setRemaining((prev) => (prev !== null ? prev - 1 : prev));
+                }
+              }}
+              onError={(msg) => setError(msg)}
+              beforeScan={checkCredits}
+              loading={loading}
+              setLoading={setLoading}
+            />
           ) : (
             <ScanInput
               type={type}
@@ -291,6 +289,9 @@ export default function ScanPage({ params }: { params: { type: string } }) {
             {type === "url" && result.metadata && Object.keys(result.metadata).length > 0 && (
               <UrlMetadata metadata={result.metadata} verdict={result.verdict} />
             )}
+            {type === "image" && result.metadata && Object.keys(result.metadata).length > 0 && (
+              <ImageMetadata metadata={result.metadata} verdict={result.verdict} />
+            )}
             <Button variant="outline" className="w-full" onClick={clearResult}>
               <RefreshCw className="mr-2 h-4 w-4" />
               Scan another
@@ -298,6 +299,9 @@ export default function ScanPage({ params }: { params: { type: string } }) {
           </CardContent>
         </Card>
       )}
+
+      <LoginPromptDialog open={showLoginPrompt} onOpenChange={setShowLoginPrompt} />
+      <UpgradePromptDialog open={showUpgradePrompt} onOpenChange={setShowUpgradePrompt} />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import {
   ClipboardList,
   FileText,
   History,
+  Image,
   LayoutDashboard,
   ScanSearch,
 } from "lucide-react";
@@ -18,6 +19,7 @@ const links = [
   { href: "/dashboard/activity", label: "Activity", icon: ClipboardList },
   { href: "/dashboard/history", label: "History", icon: History },
   { href: "/scan/email", label: "Scan", icon: ScanSearch },
+  { href: "/scan/image", label: "Image Scan", icon: Image },
   { href: "/documents/upload", label: "Documents", icon: FileText },
 ];
 

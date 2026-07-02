@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ScanSearch, FileText, ShieldAlert, ArrowRight, Mail, LinkIcon, Upload } from "lucide-react";
+import { ScanSearch, FileText, ShieldAlert, ArrowRight, Mail, LinkIcon, Image, Upload } from "lucide-react";
 import api from "@/lib/api";
 
 export default function DashboardPage() {
@@ -62,6 +62,12 @@ export default function DashboardPage() {
       description: "Verify links before you click",
       href: "/scan/url",
       icon: LinkIcon,
+    },
+    {
+      label: "Image Scan",
+      description: "Detect AI-generated or manipulated images",
+      href: "/scan/image",
+      icon: Image,
     },
     {
       label: "Document Analysis",
@@ -132,7 +138,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         {quickActions.map((action) => (
           <Link key={action.href} href={action.href}>
             <Card className="group cursor-pointer hover:border-primary/30 transition-all duration-300">
