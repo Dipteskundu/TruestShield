@@ -22,7 +22,35 @@ export interface Clause {
   keyTerms: string[];
 }
 
+export interface GlossaryEntry {
+  term: string;
+  definition: string;
+}
+
 export interface DocumentDetail {
-  document: DocumentSummary & { glossary?: { term: string; definition: string }[] };
+  document: DocumentSummary & {
+    glossary?: GlossaryEntry[];
+    missingProtections?: string[];
+  };
+  clauses: Clause[];
+}
+
+export interface ChatMessage {
+  _id: string;
+  role: "user" | "assistant";
+  content: string;
+  citedClauseIds?: string[];
+  createdAt: string;
+}
+
+export interface PublicDocument {
+  document: {
+    fileName: string;
+    documentType: string;
+    overallRiskScore: number;
+    executiveSummary: string;
+    glossary?: GlossaryEntry[];
+    createdAt: string;
+  };
   clauses: Clause[];
 }

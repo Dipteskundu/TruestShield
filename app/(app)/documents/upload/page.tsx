@@ -4,10 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { UploadDropzone } from "@/components/document/upload-dropzone";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DOCUMENT_TYPES } from "@/lib/constants";
 import api from "@/lib/api";
-import { FileText, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { FileText, Loader2, AlertCircle, CheckCircle2, Info } from "lucide-react";
 
 export default function DocumentUploadPage() {
   const router = useRouter();
@@ -26,6 +25,11 @@ export default function DocumentUploadPage() {
       const formData = new FormData();
       formData.append("documentType", documentType);
       if (file) {
+        if (file.size > 10 * 1024 * 1024) {
+          setError("File size must be under 10MB.");
+          setLoading(false);
+          return;
+        }
         formData.append("document", file);
       } else if (text) {
         formData.append("text", text);
@@ -36,8 +40,11 @@ export default function DocumentUploadPage() {
       });
 
       router.push(`/documents/${data.data.id}`);
-    } catch {
-      setError("Upload failed. Make sure you are logged in and text is at least 50 characters.");
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        "Upload failed. Make sure you are logged in and text is at least 50 characters.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -53,8 +60,17 @@ export default function DocumentUploadPage() {
           <h1 className="text-3xl font-bold tracking-tight">Analyze a document</h1>
         </div>
         <p className="text-muted-foreground">
-          Upload a PDF or paste contract text. TrustShield is not legal advice.
+          Upload a PDF or paste contract text. AI will break it down clause by clause
+          with plain-English explanations and risk analysis.
         </p>
+      </div>
+
+      <div className="glass flex items-start gap-3 rounded-xl border border-primary/20 p-4">
+        <Info className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+        <div className="text-sm text-muted-foreground">
+          <p className="font-medium text-foreground mb-1">Free plan: 5 documents per month</p>
+          <p>Each document is analyzed clause-by-clause with risk scoring, plain-English explanations, and a glossary of legal terms.</p>
+        </div>
       </div>
 
       {error && (
@@ -84,7 +100,7 @@ export default function DocumentUploadPage() {
         {file && (
           <div className="glass flex items-center gap-2 rounded-xl border border-emerald-500/20 p-3 text-sm text-emerald-600 dark:text-emerald-400">
             <CheckCircle2 className="h-4 w-4" />
-            Selected: {file.name}
+            Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(1)}MB)
           </div>
         )}
 
@@ -96,9 +112,19 @@ export default function DocumentUploadPage() {
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
+          {text.length > 0 && text.length < 50 && (
+            <p className="mt-1 text-xs text-muted-foreground">
+              {50 - text.length} more characters needed
+            </p>
+          )}
         </div>
 
-        <Button type="submit" disabled={loading || (!file && text.length < 50)} className="w-full" size="lg">
+        <Button
+          type="submit"
+          disabled={loading || (!file && text.length < 50)}
+          className="w-full"
+          size="lg"
+        >
           {loading ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
