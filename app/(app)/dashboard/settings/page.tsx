@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toaster";
 import api from "@/lib/api";
 import {
@@ -22,9 +23,19 @@ import {
   Trash2,
   Key,
   BarChart3,
+  AlertTriangle,
 } from "lucide-react";
 import { AIProviderSelect } from "@/components/ai-provider-select";
 import { CustomProviderForm } from "@/components/custom-provider-form";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { signOut } from "next-auth/react";
 
 interface ProviderModel {
   id: string;
@@ -68,6 +79,12 @@ export default function SettingsPage() {
   const [showAddProvider, setShowAddProvider] = useState(false);
   const [editingProvider, setEditingProvider] = useState<CustomProvider | null>(null);
   const [providerLoading, setProviderLoading] = useState(false);
+
+  // Delete account state
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     api.get("/api/user/ai-settings").then(({ data }) => {
@@ -158,6 +175,35 @@ export default function SettingsPage() {
       model: provider.model,
     });
     return data.data || { success: false, message: "Test failed" };
+  }
+
+  async function handleDeleteAccount() {
+    if (!deletePassword) {
+      toast("Password is required", "error");
+      return;
+    }
+    if (deleteConfirmation !== "DELETE") {
+      toast("Type DELETE to confirm", "error");
+      return;
+    }
+
+    setDeleteLoading(true);
+    try {
+      const { data } = await api.delete("/api/user/account", {
+        data: { password: deletePassword },
+      });
+      if (data.success) {
+        toast("Account deleted permanently", "success");
+        signOut({ callbackUrl: "/" });
+      }
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || "Failed to delete account";
+      toast(message, "error");
+    } finally {
+      setDeleteLoading(false);
+    }
   }
 
   const allProviders: Provider[] = [
@@ -384,6 +430,101 @@ export default function SettingsPage() {
           )}
         </CardContent>
       </Card>
+
+      <Card className="border-destructive/30">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-orange-400 text-white">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardDescription>
+                Permanently delete your account and all associated data.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between rounded-xl border border-destructive/20 p-4">
+            <div>
+              <p className="font-medium">Delete Account</p>
+              <p className="text-sm text-muted-foreground">
+                This action cannot be undone. All your scans, documents, and data will be permanently removed.
+              </p>
+            </div>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setShowDeleteDialog(true)}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Account
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Delete Account</DialogTitle>
+            <DialogDescription>
+              This action is permanent and cannot be undone. All your data will be
+              erased.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <label htmlFor="delete-password" className="text-sm font-medium">
+                Enter your password to confirm
+              </label>
+              <Input
+                id="delete-password"
+                type="password"
+                placeholder="Your password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="delete-confirm" className="text-sm font-medium">
+                Type <span className="font-bold">DELETE</span> to confirm
+              </label>
+              <Input
+                id="delete-confirm"
+                placeholder="DELETE"
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowDeleteDialog(false);
+                setDeletePassword("");
+                setDeleteConfirmation("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deleteLoading || deleteConfirmation !== "DELETE" || !deletePassword}
+              onClick={handleDeleteAccount}
+            >
+              {deleteLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Trash2 className="mr-2 h-4 w-4" />
+              )}
+              {deleteLoading ? "Deleting..." : "Yes, delete my account"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

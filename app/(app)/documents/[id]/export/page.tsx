@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import api from "@/lib/api";
-import { Download, FileJson, Loader2, ArrowLeft } from "lucide-react";
+import { Download, FileText, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function DocumentExportPage({ params }: { params: { id: string } }) {
@@ -20,7 +20,7 @@ export default function DocumentExportPage({ params }: { params: { id: string } 
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `trustshield-report-${params.id}.json`);
+      link.setAttribute("download", `trustshield-report-${params.id}.pdf`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -38,18 +38,18 @@ export default function DocumentExportPage({ params }: { params: { id: string } 
         </Link>
         <h1 className="text-3xl font-bold tracking-tight">Export report</h1>
         <p className="text-muted-foreground">
-          Download a summary of the document analysis including flagged clauses.
+          Download a PDF summary of the document analysis including flagged clauses.
         </p>
       </div>
 
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-            <FileJson className="h-8 w-8 text-primary" />
+            <FileText className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="mt-4 text-lg font-semibold">JSON Report</h3>
+          <h3 className="mt-4 text-lg font-semibold">PDF Report</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Contains executive summary, clause breakdown, and risk analysis.
+            Executive summary, risk score, clause breakdown, and glossary — formatted as a professional PDF.
           </p>
           <Button onClick={handleExport} disabled={loading} className="mt-6" size="lg">
             {loading ? (
@@ -57,7 +57,7 @@ export default function DocumentExportPage({ params }: { params: { id: string } 
             ) : (
               <Download className="mr-2 h-4 w-4" />
             )}
-            {loading ? "Downloading..." : "Download report"}
+            {loading ? "Generating PDF..." : "Download PDF"}
           </Button>
         </CardContent>
       </Card>

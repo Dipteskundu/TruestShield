@@ -7,27 +7,69 @@ import { ClauseCard } from "@/components/document/clause-card";
 import { ChatPanel } from "@/components/document/chat-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/components/ui/toaster";
 import api from "@/lib/api";
 import type { DocumentDetail, GlossaryEntry } from "@/types/document";
 import {
   FileText, Download, AlertTriangle, Loader2, Shield, FileWarning,
-  BookOpen, ShieldAlert, ChevronDown, ChevronUp, Copy, Check,
+  BookOpen, ShieldAlert, ChevronDown, ChevronUp, Copy, Check, Clock,
 } from "lucide-react";
+
+const AUTO_DELETE_OPTIONS = [
+  { value: "", label: "Never" },
+  { value: "1", label: "1 day" },
+  { value: "7", label: "7 days" },
+  { value: "30", label: "30 days" },
+  { value: "90", label: "90 days" },
+  { value: "365", label: "1 year" },
+];
 
 export default function DocumentDetailPage({ params }: { params: { id: string } }) {
   const { data: status } = useDocumentStatus(params.id);
   const [detail, setDetail] = useState<DocumentDetail | null>(null);
   const [showGlossary, setShowGlossary] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [autoDeleteDays, setAutoDeleteDays] = useState<string>("");
+  const [autoDeleteLoading, setAutoDeleteLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (status?.status === "ready") {
       api
         .get(`/api/documents/${params.id}`)
-        .then(({ data }) => setDetail(data.data))
+        .then(({ data }) => {
+          setDetail(data.data);
+          const doc = data.data.document;
+          if (doc.expiresAt) {
+            const expDate = new Date(doc.expiresAt);
+            const now = new Date();
+            const diffDays = Math.ceil((expDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            if (diffDays <= 1) setAutoDeleteDays("1");
+            else if (diffDays <= 7) setAutoDeleteDays("7");
+            else if (diffDays <= 30) setAutoDeleteDays("30");
+            else if (diffDays <= 90) setAutoDeleteDays("90");
+            else if (diffDays <= 365) setAutoDeleteDays("365");
+          }
+        })
         .catch(() => {});
     }
   }, [status?.status, params.id]);
+
+  async function handleAutoDeleteChange(value: string) => {
+    setAutoDeleteLoading(true);
+    try {
+      const days = value === "" ? null : parseInt(value, 10);
+      const { data } = await api.patch(`/api/documents/${params.id}/auto-delete`, { days });
+      if (data.success) {
+        setAutoDeleteDays(value);
+        toast(value ? `Auto-delete set to ${AUTO_DELETE_OPTIONS.find(o => o.value === value)?.label}` : "Auto-delete disabled", "success");
+      }
+    } catch {
+      toast("Failed to update auto-delete setting", "error");
+    } finally {
+      setAutoDeleteLoading(false);
+    }
+  }
 
   async function handleShare() {
     try {
@@ -126,6 +168,21 @@ export default function DocumentDetailPage({ params }: { params: { id: string } 
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+            <select
+              value={autoDeleteDays}
+              onChange={(e) => handleAutoDeleteChange(e.target.value)}
+              disabled={autoDeleteLoading}
+              className="h-8 rounded-lg border border-border/50 bg-transparent px-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
+            >
+              {AUTO_DELETE_OPTIONS.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
           <Button variant="outline" size="sm" onClick={handleShare}>
             {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
             {copied ? "Copied!" : "Share"}

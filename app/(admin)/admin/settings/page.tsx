@@ -9,6 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toaster";
+import { Loader2, Save, Pencil, X } from "lucide-react";
 
 interface PlatformStats {
   totalUsers: number;
@@ -16,19 +20,88 @@ interface PlatformStats {
   totalDocuments: number;
 }
 
+interface RateLimitTier {
+  text: number;
+  url: number;
+  image: number;
+}
+
+interface RateLimits {
+  free: RateLimitTier;
+  pro: RateLimitTier;
+}
+
 export default function AdminSettingsPage() {
+  const { toast } = useToast();
   const [stats, setStats] = useState<PlatformStats>({
     totalUsers: 0,
     totalScans: 0,
     totalDocuments: 0,
   });
 
+  const [rateLimits, setRateLimits] = useState<RateLimits>({
+    free: { text: 50, url: 30, image: 20 },
+    pro: { text: 100, url: 60, image: 40 },
+  });
+  const [editLimits, setEditLimits] = useState<RateLimits>({
+    free: { text: 50, url: 30, image: 20 },
+    pro: { text: 100, url: 60, image: 40 },
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
   useEffect(() => {
     api
       .get("/api/admin/stats")
       .then(({ data }) => setStats(data.data))
       .catch(() => {});
+
+    api
+      .get("/api/admin/rate-limits")
+      .then(({ data }) => {
+        setRateLimits(data.data);
+        setEditLimits(data.data);
+      })
+      .catch(() => {});
   }, []);
+
+  async function handleSaveRateLimits() {
+    setSaving(true);
+    try {
+      const { data } = await api.put("/api/admin/rate-limits", editLimits);
+      if (data.success) {
+        setRateLimits(data.data);
+        setEditLimits(data.data);
+        setIsEditing(false);
+        toast("Rate limits updated successfully", "success");
+      }
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message || "Failed to update rate limits";
+      toast(message, "error");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function handleCancelEdit() {
+    setEditLimits(rateLimits);
+    setIsEditing(false);
+  }
+
+  function updateLimit(
+    plan: "free" | "pro",
+    module: "text" | "url" | "image",
+    value: string
+  ) {
+    const num = parseInt(value, 10);
+    if (isNaN(num) || num < 1) return;
+    setEditLimits((prev) => ({
+      ...prev,
+      [plan]: { ...prev[plan], [module]: num },
+    }));
+  }
 
   return (
     <div className="space-y-8">
@@ -64,8 +137,45 @@ export default function AdminSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Rate Limits</CardTitle>
-          <CardDescription>Daily scan quotas by plan tier.</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Rate Limits</CardTitle>
+              <CardDescription>
+                Daily scan quotas by plan tier. Changes apply to all users
+                immediately.
+              </CardDescription>
+            </div>
+            {!isEditing ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+              >
+                <Pencil className="mr-2 h-4 w-4" />
+                Edit
+              </Button>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancelEdit}
+                  disabled={saving}
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Cancel
+                </Button>
+                <Button size="sm" onClick={handleSaveRateLimits} disabled={saving}>
+                  {saving ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  {saving ? "Saving..." : "Save Changes"}
+                </Button>
+              </div>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -78,21 +188,47 @@ export default function AdminSettingsPage() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b">
-                  <td className="p-3 font-medium">Text (email/job/message)</td>
-                  <td className="p-3">50 / day</td>
-                  <td className="p-3">100 / day</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="p-3 font-medium">URL</td>
-                  <td className="p-3">30 / day</td>
-                  <td className="p-3">60 / day</td>
-                </tr>
-                <tr>
-                  <td className="p-3 font-medium">Image</td>
-                  <td className="p-3">20 / day</td>
-                  <td className="p-3">40 / day</td>
-                </tr>
+                {(["text", "url", "image"] as const).map((module) => (
+                  <tr key={module} className="border-b">
+                    <td className="p-3 font-medium">
+                      {module === "text"
+                        ? "Text (email/job/message)"
+                        : module.charAt(0).toUpperCase() + module.slice(1)}
+                    </td>
+                    <td className="p-3">
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          min={1}
+                          max={10000}
+                          className="w-24"
+                          value={editLimits.free[module]}
+                          onChange={(e) =>
+                            updateLimit("free", module, e.target.value)
+                          }
+                        />
+                      ) : (
+                        <span>{rateLimits.free[module]} / day</span>
+                      )}
+                    </td>
+                    <td className="p-3">
+                      {isEditing ? (
+                        <Input
+                          type="number"
+                          min={1}
+                          max={10000}
+                          className="w-24"
+                          value={editLimits.pro[module]}
+                          onChange={(e) =>
+                            updateLimit("pro", module, e.target.value)
+                          }
+                        />
+                      ) : (
+                        <span>{rateLimits.pro[module]} / day</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
