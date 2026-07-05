@@ -55,7 +55,7 @@ export default function DocumentDetailPage({ params }: { params: { id: string } 
     }
   }, [status?.status, params.id]);
 
-  async function handleAutoDeleteChange(value: string) => {
+  async function handleAutoDeleteChange(value: string) {
     setAutoDeleteLoading(true);
     try {
       const days = value === "" ? null : parseInt(value, 10);

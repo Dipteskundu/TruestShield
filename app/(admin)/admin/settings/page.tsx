@@ -243,11 +243,11 @@ export default function AdminSettingsPage() {
         <CardContent>
           <dl className="grid gap-2 text-sm sm:grid-cols-2">
             <dt className="text-muted-foreground">Environment</dt>
-            <dd>Development</dd>
+            <dd>{process.env.NODE_ENV || "development"}</dd>
             <dt className="text-muted-foreground">API URL</dt>
-            <dd>http://localhost:5000</dd>
+            <dd>{process.env.NEXT_PUBLIC_API_URL || "Not configured"}</dd>
             <dt className="text-muted-foreground">Frontend URL</dt>
-            <dd>http://localhost:3000</dd>
+            <dd>{typeof window !== "undefined" ? window.location.origin : "Not available"}</dd>
           </dl>
         </CardContent>
       </Card>

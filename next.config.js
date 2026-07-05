@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion'],
-  },
+  optimizePackageImports: ['lucide-react', 'framer-motion'],
 };
 
 module.exports = nextConfig;

@@ -167,16 +167,6 @@ export default function SettingsPage() {
     }
   }
 
-  async function handleTestCustomProvider(provider: CustomProvider) {
-    const { data } = await api.post("/api/user/ai-settings/providers/test", {
-      provider: "custom",
-      endpoint: provider.endpoint,
-      apiKey: provider.apiKey.replace(/\.\.\./g, ""),
-      model: provider.model,
-    });
-    return data.data || { success: false, message: "Test failed" };
-  }
-
   async function handleDeleteAccount() {
     if (!deletePassword) {
       toast("Password is required", "error");

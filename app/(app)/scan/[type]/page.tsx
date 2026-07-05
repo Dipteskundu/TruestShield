@@ -21,7 +21,7 @@ import { VERDICT_COLORS } from "@/lib/constants";
 import { canGuestScan, incrementGuestCredits, getGuestCreditsUsed } from "@/lib/guest-credits";
 import api from "@/lib/api";
 import type { ScanResult } from "@/types/scan";
-import { Copy, RefreshCw, Share2, AlertCircle, Loader2, Clock, Info } from "lucide-react";
+import { Copy, RefreshCw, Share2, AlertCircle, Clock, Info } from "lucide-react";
 import { useRecentScans } from "@/hooks/use-scan-result";
 import { formatDate } from "@/lib/utils";
 

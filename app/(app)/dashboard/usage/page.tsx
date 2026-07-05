@@ -57,11 +57,9 @@ interface UsageData {
 function ProgressBar({
   used,
   limit,
-  color = "primary",
 }: {
   used: number;
   limit: number | null;
-  color?: string;
 }) {
   if (limit === null || limit === 0) {
     return (
@@ -74,8 +72,6 @@ function ProgressBar({
     );
   }
   const pct = Math.min(100, Math.round((used / limit) * 100));
-  const barColor =
-    pct >= 90 ? "bg-red-500" : pct >= 70 ? "bg-amber-500" : `bg-${color === "primary" ? "emerald" : color}-500`;
 
   return (
     <div className="h-2 w-full rounded-full bg-muted overflow-hidden">

@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { useScanHistory } from "@/hooks/use-scan-history";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { VERDICT_COLORS } from "@/lib/constants";
 import { formatDate } from "@/lib/utils";
-import { History, ScanSearch, FileText, ArrowRight, Clock } from "lucide-react";
+import { ScanSearch, FileText, ArrowRight, Clock } from "lucide-react";
 
 export default function HistoryPage() {
   const { data, isLoading } = useScanHistory();

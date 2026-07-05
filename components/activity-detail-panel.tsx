@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   X,
@@ -258,20 +258,20 @@ export function ActivityDetailPanel({ item, onClose }: ActivityDetailPanelProps)
                 </div>
               </div>
               <Button asChild variant="outline" size="sm" className="w-full">
-                <a href={`/documents/${item.id}`}>
+                <Link href={`/documents/${item.id}`}>
                   View Full Document
                   <ChevronRight className="ml-1 h-4 w-4" />
-                </a>
+                </Link>
               </Button>
             </div>
           )}
 
           {item.category === "scan" && (
             <Button asChild variant="outline" size="sm" className="w-full">
-              <a href={`/result/${item.id}`}>
+              <Link href={`/result/${item.id}`}>
                 View Full Result
                 <ChevronRight className="ml-1 h-4 w-4" />
-              </a>
+              </Link>
             </Button>
           )}
         </div>

@@ -30,7 +30,7 @@ export function LoginPromptDialog({ open, onOpenChange }: LoginPromptDialogProps
             <Link href="/auth/login">Sign In</Link>
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/auth/register">Create Account</Link>
+            <Link href="/auth/signup">Create Account</Link>
           </Button>
         </div>
       </DialogContent>

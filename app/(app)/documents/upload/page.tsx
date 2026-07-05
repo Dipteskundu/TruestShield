@@ -53,9 +53,9 @@ export default function DocumentUploadPage() {
       });
 
       router.push(`/documents/${data.data.id}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const message =
-        err?.response?.data?.message ||
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
         "Upload failed. Make sure you are logged in and text is at least 50 characters.";
       setError(message);
     } finally {

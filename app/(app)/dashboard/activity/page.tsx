@@ -27,7 +27,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  Loader2,
   SlidersHorizontal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";

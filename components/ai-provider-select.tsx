@@ -34,9 +34,6 @@ export function AIProviderSelect({
   const [expandedProvider, setExpandedProvider] = useState<string | null>(null);
 
   const currentProvider = providers.find((p) => p.id === selectedProvider);
-  const currentModel = currentProvider?.models.find(
-    (m) => m.id === (selectedModel || currentProvider?.models[0]?.id)
-  );
 
   return (
     <div className="space-y-4">

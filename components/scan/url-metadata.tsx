@@ -11,7 +11,6 @@ import {
   Calendar,
   ArrowRight,
   AlertTriangle,
-  ExternalLink,
   Link2,
   Search,
 } from "lucide-react";
