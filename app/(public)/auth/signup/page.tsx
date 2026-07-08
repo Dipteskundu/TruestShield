@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, ArrowRight, Eye, EyeOff, Loader2, Check } from "lucide-react";
+import { Shield, Eye, EyeOff, Check } from "lucide-react";
 import { signIn } from "next-auth/react";
 import api, { setAuthToken } from "@/lib/api";
 
@@ -159,12 +159,7 @@ export default function SignupPage() {
                 </div>
               )}
             </div>
-            <Button type="submit" className="w-full" size="lg" disabled={loading}>
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <ArrowRight className="mr-2 h-4 w-4" />
-              )}
+            <Button type="submit" className="w-full" size="lg" disabled={loading} isLoading={loading}>
               {loading ? "Creating account..." : "Create account"}
             </Button>
           </form>

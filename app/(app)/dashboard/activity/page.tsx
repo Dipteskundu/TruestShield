@@ -17,7 +17,7 @@ import {
   X,
   Mail,
   LinkIcon,
-  Image,
+  Image as ImageIcon,
   FileText,
   Briefcase,
   MessageSquare,
@@ -58,7 +58,7 @@ const TYPE_FILTERS = [
   { value: "", label: "All Types" },
   { value: "email", label: "Email", icon: Mail },
   { value: "url", label: "URL", icon: LinkIcon },
-  { value: "image", label: "Image", icon: Image },
+  { value: "image", label: "Image", icon: ImageIcon },
   { value: "job", label: "Job Post", icon: Briefcase },
   { value: "message", label: "Message", icon: MessageSquare },
   { value: "document", label: "Documents", icon: FileText },
@@ -79,7 +79,7 @@ function TypeIcon({ type, category }: { type: string; category: string }) {
     case "url":
       return <LinkIcon className="h-4 w-4" />;
     case "image":
-      return <Image className="h-4 w-4" />;
+      return <ImageIcon className="h-4 w-4" />;
     case "job":
       return <Briefcase className="h-4 w-4" />;
     case "message":
@@ -227,7 +227,7 @@ export default function ActivityPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between animate-fade-in-up">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Activity</h1>
           <p className="text-muted-foreground">
@@ -241,7 +241,7 @@ export default function ActivityPage() {
         )}
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 animate-fade-in-up opacity-0 stagger-1">
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -249,7 +249,7 @@ export default function ActivityPage() {
               placeholder="Search scanned content or file names..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
+              className="pl-9 focus:shadow-glow-sm transition-shadow duration-300"
             />
           </div>
           <Button
@@ -269,7 +269,7 @@ export default function ActivityPage() {
         </div>
 
         {showFilters && (
-          <div className="flex flex-wrap items-center gap-2 animate-in slide-in-from-top duration-200">
+          <div className="flex flex-wrap items-center gap-2 animate-fade-in-up">
             <div className="flex items-center gap-1.5">
               <Filter className="h-3.5 w-3.5 text-muted-foreground" />
               <span className="text-xs font-medium text-muted-foreground">Type:</span>
@@ -311,11 +311,11 @@ export default function ActivityPage() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-20 animate-pulse rounded-xl bg-muted" />
+            <div key={i} className="h-20 animate-pulse rounded-xl glass shimmer" />
           ))}
         </div>
       ) : items.length === 0 ? (
-        <Card className="border-dashed">
+        <Card className="border-dashed border-primary/20">
           <CardContent className="p-12 text-center">
             <Activity className="mx-auto mb-4 h-12 w-12 text-muted-foreground/30" />
             <p className="text-sm text-muted-foreground">
@@ -331,13 +331,19 @@ export default function ActivityPage() {
       ) : (
         <>
           <div className="space-y-2">
-            {items.map((item) => (
+            {items.map((item, index) => (
               <button
                 key={item.id}
                 onClick={() => setSelectedItem(item)}
-                className="w-full text-left"
+                className="w-full text-left animate-fade-in-up opacity-0"
+                style={{ animationDelay: `${index * 0.03}s` }}
               >
-                <Card className="group cursor-pointer hover:border-primary/20 transition-all duration-200">
+                <Card className={cn(
+                  "group cursor-pointer hover:shadow-premium hover:-translate-y-0.5 transition-all duration-300",
+                  item.verdict === "safe" && "border-l-2 border-l-emerald-500",
+                  item.verdict === "suspicious" && "border-l-2 border-l-amber-500",
+                  item.verdict === "dangerous" && "border-l-2 border-l-red-500"
+                )}>
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
                       <div

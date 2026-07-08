@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CardGradient } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toaster";
@@ -24,6 +25,8 @@ import {
   Key,
   BarChart3,
   AlertTriangle,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { AIProviderSelect } from "@/components/ai-provider-select";
 import { CustomProviderForm } from "@/components/custom-provider-form";
@@ -65,6 +68,57 @@ interface AISettings {
   model: string | null;
   customProviders: CustomProvider[];
   availableProviders: Provider[];
+}
+
+function AccordionSection({
+  title,
+  description,
+  icon: Icon,
+  gradient,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  gradient: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <CardGradient className="animate-fade-in-up">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full text-left"
+      >
+        <CardHeader className="cursor-pointer">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-white`}>
+                <Icon className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle>{title}</CardTitle>
+                <CardDescription>{description}</CardDescription>
+              </div>
+            </div>
+            {isOpen ? (
+              <ChevronUp className="h-5 w-5 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="h-5 w-5 text-muted-foreground" />
+            )}
+          </div>
+        </CardHeader>
+      </button>
+      {isOpen && (
+        <CardContent className="animate-fade-in-up">
+          {children}
+        </CardContent>
+      )}
+    </CardGradient>
+  );
 }
 
 export default function SettingsPage() {
@@ -215,37 +269,37 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="space-y-8 animate-pulse">
-        <div className="space-y-2">
-          <div className="h-10 w-32 rounded-lg bg-muted" />
-          <div className="h-4 w-48 rounded bg-muted" />
+        <div className="space-y-3">
+          <div className="h-10 w-32 rounded-lg shimmer" />
+          <div className="h-4 w-48 rounded shimmer" />
         </div>
-        <div className="rounded-xl border border-border/50 p-6 space-y-4">
+        <div className="rounded-2xl glass p-6 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-muted" />
+            <div className="h-10 w-10 rounded-xl shimmer" />
             <div className="space-y-2">
-              <div className="h-4 w-24 rounded bg-muted" />
-              <div className="h-3 w-40 rounded bg-muted" />
+              <div className="h-4 w-24 rounded shimmer" />
+              <div className="h-3 w-40 rounded shimmer" />
             </div>
           </div>
           <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <div className="h-6 w-24 rounded bg-muted" />
-              <div className="h-4 w-48 rounded bg-muted" />
+              <div className="h-6 w-24 rounded shimmer" />
+              <div className="h-4 w-48 rounded shimmer" />
             </div>
-            <div className="h-10 w-32 rounded-lg bg-muted" />
+            <div className="h-10 w-32 rounded-lg shimmer" />
           </div>
         </div>
-        <div className="rounded-xl border border-border/50 p-6 space-y-4">
+        <div className="rounded-2xl glass p-6 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-muted" />
+            <div className="h-10 w-10 rounded-xl shimmer" />
             <div className="space-y-2">
-              <div className="h-4 w-24 rounded bg-muted" />
-              <div className="h-3 w-56 rounded bg-muted" />
+              <div className="h-4 w-24 rounded shimmer" />
+              <div className="h-3 w-56 rounded shimmer" />
             </div>
           </div>
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 rounded-xl bg-muted" />
+              <div key={i} className="h-16 rounded-xl shimmer" />
             ))}
           </div>
         </div>
@@ -255,63 +309,49 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <div className="animate-fade-in-up">
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
         <p className="text-muted-foreground">Manage your TrustShield account.</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 text-white">
-              <CreditCard className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>Plan</CardTitle>
-              <CardDescription>Your current subscription plan.</CardDescription>
-            </div>
+      <AccordionSection
+        title="Plan"
+        description="Your current subscription plan."
+        icon={CreditCard}
+        gradient="from-emerald-500 to-teal-400"
+        defaultOpen
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-lg font-semibold capitalize">
+              {(session?.user as { plan?: string })?.plan || "free"} plan
+            </p>
+            <p className="text-sm text-muted-foreground">
+              View detailed usage breakdowns and limits.
+            </p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-lg font-semibold capitalize">
-                {(session?.user as { plan?: string })?.plan || "free"} plan
-              </p>
-              <p className="text-sm text-muted-foreground">
-                View detailed usage breakdowns and limits.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link href="/dashboard/usage">
-                <Button variant="outline" size="sm">
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  View Usage
-                </Button>
-              </Link>
-              <Button variant="outline" disabled>
-                Upgrade (coming soon)
+          <div className="flex items-center gap-2">
+            <Link href="/dashboard/usage">
+              <Button variant="outline" size="sm">
+                <BarChart3 className="mr-2 h-4 w-4" />
+                View Usage
               </Button>
-            </div>
+            </Link>
+            <Button variant="outline" disabled>
+              Upgrade (coming soon)
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </AccordionSection>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-400 text-white">
-              <Bot className="h-5 w-5" />
-            </div>
-            <div>
-              <CardTitle>AI Provider</CardTitle>
-              <CardDescription>
-                Configure which AI powers your scans and analysis.
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
+      <AccordionSection
+        title="AI Provider"
+        description="Configure which AI powers your scans and analysis."
+        icon={Bot}
+        gradient="from-violet-500 to-purple-400"
+        defaultOpen
+      >
+        <div className="space-y-6">
           <AIProviderSelect
             providers={allProviders}
             selectedProvider={selectedProvider}
@@ -364,7 +404,7 @@ export default function SettingsPage() {
                   {aiSettings.customProviders.map((provider) => (
                     <div
                       key={provider.id}
-                      className="flex items-center justify-between rounded-xl border p-4"
+                      className="flex items-center justify-between rounded-xl border p-4 hover:shadow-premium transition-all duration-300"
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
@@ -418,42 +458,44 @@ export default function SettingsPage() {
               )}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </AccordionSection>
 
-      <Card className="border-destructive/30">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-orange-400 text-white">
-              <AlertTriangle className="h-5 w-5" />
+      <div className="animate-fade-in-up opacity-0 stagger-3">
+        <Card className="border-destructive/30 animate-glow-pulse">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-orange-400 text-white">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                <CardDescription>
+                  Permanently delete your account and all associated data.
+                </CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-destructive">Danger Zone</CardTitle>
-              <CardDescription>
-                Permanently delete your account and all associated data.
-              </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between rounded-xl border border-destructive/20 p-4">
+              <div>
+                <p className="font-medium">Delete Account</p>
+                <p className="text-sm text-muted-foreground">
+                  This action cannot be undone. All your scans, documents, and data will be permanently removed.
+                </p>
+              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setShowDeleteDialog(true)}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete Account
+              </Button>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between rounded-xl border border-destructive/20 p-4">
-            <div>
-              <p className="font-medium">Delete Account</p>
-              <p className="text-sm text-muted-foreground">
-                This action cannot be undone. All your scans, documents, and data will be permanently removed.
-              </p>
-            </div>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setShowDeleteDialog(true)}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete Account
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
 
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>

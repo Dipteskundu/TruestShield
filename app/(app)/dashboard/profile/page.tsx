@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CardGradient } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toaster";
@@ -92,29 +92,29 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="space-y-8 animate-pulse">
-        <div className="space-y-2">
-          <div className="h-10 w-32 rounded-lg bg-muted" />
-          <div className="h-4 w-48 rounded bg-muted" />
+        <div className="space-y-3">
+          <div className="h-10 w-32 rounded-lg shimmer" />
+          <div className="h-4 w-48 rounded shimmer" />
         </div>
-        <div className="rounded-xl border border-border/50 p-6 space-y-4">
+        <div className="rounded-2xl glass p-6 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-muted" />
+            <div className="h-10 w-10 rounded-xl shimmer" />
             <div className="space-y-2">
-              <div className="h-4 w-32 rounded bg-muted" />
-              <div className="h-3 w-48 rounded bg-muted" />
+              <div className="h-4 w-32 rounded shimmer" />
+              <div className="h-3 w-48 rounded shimmer" />
             </div>
           </div>
           <div className="flex justify-center">
-            <div className="h-24 w-24 rounded-full bg-muted" />
+            <div className="h-24 w-24 rounded-full shimmer" />
           </div>
         </div>
-        <div className="rounded-xl border border-border/50 p-6 space-y-4">
+        <div className="rounded-2xl glass p-6 space-y-4">
           <div className="space-y-3 max-w-md">
-            <div className="h-4 w-16 rounded bg-muted" />
-            <div className="h-10 w-full rounded-lg bg-muted" />
-            <div className="h-4 w-16 rounded bg-muted" />
-            <div className="h-10 w-full rounded-lg bg-muted" />
-            <div className="h-10 w-32 rounded-lg bg-muted" />
+            <div className="h-4 w-16 rounded shimmer" />
+            <div className="h-10 w-full rounded-lg shimmer" />
+            <div className="h-4 w-16 rounded shimmer" />
+            <div className="h-10 w-full rounded-lg shimmer" />
+            <div className="h-10 w-32 rounded-lg shimmer" />
           </div>
         </div>
       </div>
@@ -123,16 +123,16 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <div className="animate-fade-in-up">
         <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
         <p className="text-muted-foreground">Manage your account information.</p>
       </div>
 
-      <Card>
+      <CardGradient className="animate-fade-in-up opacity-0 stagger-1">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-              <User className="h-5 w-5 text-primary" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary text-white">
+              <User className="h-5 w-5" />
             </div>
             <div>
               <CardTitle>Profile Picture</CardTitle>
@@ -147,18 +147,29 @@ export default function ProfilePage() {
             onAvatarUpdate={setAvatar}
           />
         </CardContent>
-      </Card>
+      </CardGradient>
 
-      <Card>
-        <CardContent>
+      <CardGradient className="animate-fade-in-up opacity-0 stagger-2">
+        <CardContent className="pt-6">
           <form onSubmit={handleProfileUpdate} className="space-y-4 max-w-md">
             <div className="space-y-2">
               <label className="text-sm font-medium">Name</label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} required />
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="focus:shadow-glow-sm transition-shadow duration-300"
+              />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="focus:shadow-glow-sm transition-shadow duration-300"
+              />
             </div>
             <Button type="submit" disabled={profileLoading}>
               {profileLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
@@ -166,13 +177,13 @@ export default function ProfilePage() {
             </Button>
           </form>
         </CardContent>
-      </Card>
+      </CardGradient>
 
-      <Card>
+      <CardGradient className="animate-fade-in-up opacity-0 stagger-3">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10">
-              <Lock className="h-5 w-5 text-accent" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-400 text-white">
+              <Lock className="h-5 w-5" />
             </div>
             <div>
               <CardTitle>Password</CardTitle>
@@ -192,9 +203,9 @@ export default function ProfilePage() {
               >
                 <button
                   onClick={() => setShowPasswordForm(true)}
-                  className="group flex items-center gap-3 rounded-xl border border-dashed border-border p-4 text-left transition-all hover:border-accent/50 hover:bg-accent/5 w-full max-w-md"
+                  className="group flex items-center gap-3 rounded-xl border border-dashed border-border p-4 text-left transition-all hover:border-accent/50 hover:bg-accent/5 w-full max-w-md hover:shadow-premium"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 transition-colors group-hover:bg-accent/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 transition-all group-hover:bg-accent/20 group-hover:scale-110">
                     <KeyRound className="h-5 w-5 text-accent" />
                   </div>
                   <div>
@@ -214,15 +225,35 @@ export default function ProfilePage() {
                 <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Current password</label>
-                    <Input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required />
+                    <Input
+                      type="password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      required
+                      className="focus:shadow-glow-sm transition-shadow duration-300"
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">New password</label>
-                    <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} minLength={8} required />
+                    <Input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      minLength={8}
+                      required
+                      className="focus:shadow-glow-sm transition-shadow duration-300"
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Confirm new password</label>
-                    <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} minLength={8} required />
+                    <Input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      minLength={8}
+                      required
+                      className="focus:shadow-glow-sm transition-shadow duration-300"
+                    />
                   </div>
                   <div className="flex gap-2">
                     <Button type="submit" disabled={passwordLoading}>
@@ -248,7 +279,7 @@ export default function ProfilePage() {
             )}
           </AnimatePresence>
         </CardContent>
-      </Card>
+      </CardGradient>
     </div>
   );
 }

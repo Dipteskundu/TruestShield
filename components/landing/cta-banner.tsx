@@ -20,17 +20,19 @@ export function CTABanner() {
 
           <div className="relative">
             <div className="mb-6 flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-glow">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-sm shadow-glow animate-float">
                 <Shield className="h-8 w-8" />
               </div>
             </div>
+
+            <p className="mb-3 text-sm font-medium text-white/60">Join 5,000+ users who scan before they trust</p>
 
             <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
               Ready to scan anything?
             </h2>
             <p className="mx-auto mb-8 max-w-lg text-white/70">
-              Join thousands of users who verify before they trust. Start
-              scanning emails, URLs, images, and documents in seconds.
+              Start scanning emails, URLs, images, and documents in seconds.
+              No credit card required.
             </p>
 
             <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -48,7 +50,7 @@ export function CTABanner() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white px-8"
+                  className="border-white/30 text-white bg-white/10 hover:bg-white/20 hover:text-white px-8 transition-all duration-300"
                 >
                   Try a scan
                 </Button>
@@ -56,8 +58,7 @@ export function CTABanner() {
             </div>
 
             <p className="mt-6 text-xs text-white/50">
-              No credit card required. Free plan includes daily scans and 5
-              document analyses per month.
+              Free plan includes daily scans and 5 document analyses per month.
             </p>
           </div>
         </motion.div>

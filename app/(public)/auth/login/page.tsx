@@ -6,7 +6,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Shield, Eye, EyeOff } from "lucide-react";
 import { setAuthToken } from "@/lib/api";
 import api from "@/lib/api";
 
@@ -128,15 +128,16 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-            <Button type="submit" className="w-full" size="lg" disabled={loading}>
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <ArrowRight className="mr-2 h-4 w-4" />
-              )}
+            <Button type="submit" className="w-full" size="lg" disabled={loading} isLoading={loading}>
               {loading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
+
+          <div className="text-center text-sm text-muted-foreground">
+            <Link href="/auth/reset" className="font-medium text-primary hover:text-primary/80 transition-colors">
+              Forgot your password?
+            </Link>
+          </div>
 
           <p className="text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}

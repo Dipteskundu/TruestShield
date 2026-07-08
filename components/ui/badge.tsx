@@ -15,6 +15,14 @@ const badgeVariants = cva(
           "border-transparent bg-destructive/90 text-destructive-foreground shadow-sm",
         outline:
           "border-primary/20 text-primary",
+        glow:
+          "border-transparent gradient-primary text-white shadow-sm shadow-primary/20 animate-glow-pulse",
+        "glow-safe":
+          "border-transparent bg-emerald-500/90 text-white shadow-sm shadow-emerald-500/20 animate-glow-pulse",
+        "glow-suspicious":
+          "border-transparent bg-amber-500/90 text-white shadow-sm shadow-amber-500/20 animate-glow-pulse",
+        "glow-dangerous":
+          "border-transparent bg-red-500/90 text-white shadow-sm shadow-red-500/20 animate-glow-pulse",
       },
     },
     defaultVariants: {

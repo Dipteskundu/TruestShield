@@ -10,7 +10,7 @@ import {
   ShieldAlert,
   Mail,
   LinkIcon,
-  Image,
+  Image as ImageIcon,
   FileText,
   Briefcase,
   MessageSquare,
@@ -82,7 +82,7 @@ function TypeIcon({ type, category }: { type: string; category: string }) {
     case "url":
       return <LinkIcon className="h-5 w-5" />;
     case "image":
-      return <Image className="h-5 w-5" />;
+      return <ImageIcon className="h-5 w-5" />;
     case "job":
       return <Briefcase className="h-5 w-5" />;
     case "message":

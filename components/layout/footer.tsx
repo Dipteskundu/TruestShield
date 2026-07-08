@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { Shield, Github, Twitter, Linkedin, Mail } from "lucide-react";
+import { Shield, Github, Twitter, Linkedin, Mail, ArrowUp } from "lucide-react";
 
 const footerSections = [
   {
@@ -30,10 +32,10 @@ const footerSections = [
 ];
 
 const socialLinks = [
-  { href: "#", icon: Github, label: "GitHub" },
-  { href: "#", icon: Twitter, label: "Twitter" },
-  { href: "#", icon: Linkedin, label: "LinkedIn" },
-  { href: "#", icon: Mail, label: "Email" },
+  { href: "https://github.com", icon: Github, label: "GitHub" },
+  { href: "https://twitter.com", icon: Twitter, label: "Twitter" },
+  { href: "https://linkedin.com", icon: Linkedin, label: "LinkedIn" },
+  { href: "mailto:hello@trustshield.dev", icon: Mail, label: "Email" },
 ];
 
 export function Footer() {
@@ -64,7 +66,9 @@ export function Footer() {
                 <Link
                   key={label}
                   href={href}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:bg-primary/5 hover:text-primary transition-all duration-200"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl text-muted-foreground hover:bg-primary/5 hover:text-primary hover:scale-110 transition-all duration-200"
                   aria-label={label}
                 >
                   <Icon className="h-4 w-4" />
@@ -97,10 +101,19 @@ export function Footer() {
             <p className="text-xs text-muted-foreground">
               &copy; {new Date().getFullYear()} TrustShield. All rights reserved.
             </p>
-            <p className="text-xs text-muted-foreground/70 max-w-lg text-center md:text-right">
-              Not legal advice. The document analysis module is a legal literacy
-              tool, not a substitute for a licensed attorney.
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="text-xs text-muted-foreground/70 max-w-lg text-center md:text-right">
+                Not legal advice. The document analysis module is a legal literacy
+                tool, not a substitute for a licensed attorney.
+              </p>
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-border/50 text-muted-foreground hover:bg-primary/5 hover:text-primary transition-all duration-200"
+                aria-label="Back to top"
+              >
+                <ArrowUp className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>

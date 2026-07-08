@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Shield, Menu } from "lucide-react";
+import { Shield, Menu, Bell } from "lucide-react";
 import { ProfileDropdown } from "./profile-dropdown";
 
 interface TopBarProps {
@@ -23,9 +23,9 @@ export function TopBar({ onMenuClick }: TopBarProps) {
           >
             <Menu className="h-5 w-5" />
           </button>
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg gradient-primary">
-              <Shield className="h-3.5 w-3.5 text-white" />
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl gradient-primary shadow-md shadow-primary/20 group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300 group-hover:scale-105">
+              <Shield className="h-4 w-4 text-white animate-glow-pulse" />
             </div>
             <span className="text-sm font-bold tracking-tight">
               Trust<span className="text-gradient">Shield</span>
@@ -33,7 +33,11 @@ export function TopBar({ onMenuClick }: TopBarProps) {
           </Link>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
+          <button className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-primary/5 transition-colors relative group">
+            <Bell className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary animate-pulse" />
+          </button>
           {session && <ProfileDropdown />}
         </div>
       </div>

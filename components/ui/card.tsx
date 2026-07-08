@@ -16,6 +16,39 @@ const Card = React.forwardRef<
 ));
 Card.displayName = "Card";
 
+const CardHover = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "glass rounded-2xl text-card-foreground shadow-glass transition-all duration-300",
+      "hover:shadow-premium hover:-translate-y-1",
+      "cursor-pointer",
+      className
+    )}
+    {...props}
+  />
+));
+CardHover.displayName = "CardHover";
+
+const CardGradient = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "glass rounded-2xl text-card-foreground shadow-glass transition-all duration-300",
+      "gradient-border-animated hover:shadow-premium-lg hover:-translate-y-1",
+      className
+    )}
+    {...props}
+  />
+));
+CardGradient.displayName = "CardGradient";
+
 const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -63,4 +96,16 @@ const CardContent = React.forwardRef<
 ));
 CardContent.displayName = "CardContent";
 
-export { Card, CardHeader, CardTitle, CardDescription, CardContent };
+const CardFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("flex items-center p-6 pt-0", className)}
+    {...props}
+  />
+));
+CardFooter.displayName = "CardFooter";
+
+export { Card, CardHover, CardGradient, CardHeader, CardTitle, CardDescription, CardContent, CardFooter };

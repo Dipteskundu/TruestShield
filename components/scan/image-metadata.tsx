@@ -5,7 +5,7 @@ import {
   Scissors,
   UserCheck,
   Settings2,
-  Image,
+  Image as ImageIcon,
 } from "lucide-react";
 
 interface ImageMetadataProps {
@@ -61,7 +61,7 @@ export function ImageMetadata({ metadata }: ImageMetadataProps) {
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-semibold flex items-center gap-2">
-        <Image className="h-4 w-4" />
+        <ImageIcon className="h-4 w-4" />
         Image Analysis Details
       </h3>
 
