@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, ScanSearch, Settings, Users, Shield } from "lucide-react";
+import { BarChart3, ScanSearch, Settings, Users, Shield, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/admin", label: "Overview", icon: BarChart3 },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/scans", label: "Scans", icon: ScanSearch },
+  { href: "/admin/chatbot", label: "Chatbot", icon: MessageSquare },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

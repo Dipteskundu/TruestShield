@@ -13,6 +13,7 @@ import {
   Settings,
   X,
   Shield,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ const adminLinks = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: FileText },
   { href: "/admin/scans", label: "Scans", icon: ScanSearch },
+  { href: "/admin/chatbot", label: "Chatbot", icon: MessageSquare },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

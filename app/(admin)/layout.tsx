@@ -4,6 +4,7 @@ import { useState } from "react";
 import { TopBar } from "@/components/layout/top-bar";
 import { AdminSidebar } from "@/components/layout/admin-sidebar";
 import { MobileSidebar } from "@/components/layout/mobile-sidebar";
+import { ChatbotContainer } from "@/components/chatbot/ChatbotContainer";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,6 +17,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <main className="flex-1 p-6 pb-20 md:pb-6">{children}</main>
       </div>
       <MobileSidebar role="admin" open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <ChatbotContainer />
     </div>
   );
 }
