@@ -168,7 +168,12 @@ export function ChatPanel() {
   );
 
   return (
-    <div className="flex flex-col h-[600px] w-[420px] max-w-[calc(100vw-2rem)] rounded-2xl border border-border/50 bg-background shadow-2xl overflow-hidden">
+    <div className="flex flex-col w-full h-full md:h-[calc(100dvh-5rem)] lg:h-[480px] lg:w-[420px] rounded-t-2xl lg:rounded-2xl border border-border/50 bg-background shadow-2xl overflow-hidden">
+      {/* Drag handle for mobile bottom sheet */}
+      <div className="flex lg:hidden justify-center pt-2 pb-1">
+        <div className="h-1 w-10 rounded-full bg-muted-foreground/30" />
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border/30">
         <div className="flex items-center gap-2.5">

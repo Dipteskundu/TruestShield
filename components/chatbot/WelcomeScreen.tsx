@@ -49,11 +49,9 @@ const suggestions = [
 
 export function WelcomeScreen({ userName, onSuggestionClick }: WelcomeScreenProps) {
   return (
-    <div className="flex flex-col items-center justify-center h-full px-6 py-8">
+    <div className="flex flex-col items-center justify-center h-full px-4 sm:px-6 py-6 sm:py-8">
       <div className="text-center mb-8">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl gradient-primary mx-auto mb-4 shadow-lg shadow-primary/20">
-          <Shield className="h-7 w-7 text-white" />
-        </div>
+
         <h2 className="text-xl font-bold mb-1">
           {userName ? `Hi, ${userName}!` : "Hi!"}
         </h2>
@@ -64,7 +62,7 @@ export function WelcomeScreen({ userName, onSuggestionClick }: WelcomeScreenProp
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5 w-full max-w-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-sm">
         {suggestions.map((s) => (
           <button
             key={s.label}
