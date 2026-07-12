@@ -14,11 +14,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { GroupedBarChart } from "@/components/ui/bar-chart";
-import { ActivityItem } from "@/components/ui/activity-item";
 import api from "@/lib/api";
 import {
   BarChart3,
-  Clock,
   Crown,
   ArrowRight,
   TrendingUp,
@@ -381,30 +379,6 @@ export default function UsagePage() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Activity Timeline */}
-      {data.recentActivity && data.recentActivity.length > 0 && (
-        <Card className="animate-fade-in-up opacity-0 stagger-6">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 text-white shadow-md shadow-blue-500/20">
-                <Clock className="h-5 w-5" />
-              </div>
-              <div>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Your latest scans and documents</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="max-h-96 overflow-y-auto space-y-1 -mx-2 px-2 scrollbar-thin">
-              {data.recentActivity.map((item) => (
-                <ActivityItem key={item.id} {...item} />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Upgrade CTA */}
       {!isPro && (

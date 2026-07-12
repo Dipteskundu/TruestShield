@@ -77,7 +77,7 @@ export function MobileSidebar({ role, open = false, onClose }: MobileSidebarProp
           </div>
           <nav className="flex flex-col gap-1 p-3 flex-1">
             {links.map(({ href, label, icon: Icon }) => {
-              const isActive = pathname === href || pathname.startsWith(href + "/");
+              const isActive = pathname === href;
               return (
                 <Link
                   key={href}

@@ -53,7 +53,7 @@ export function AppSidebar() {
             </p>
             <div className="flex flex-col gap-0.5">
               {group.links.map(({ href, label, icon: Icon }) => {
-                const isActive = pathname === href || pathname.startsWith(href + "/");
+                const isActive = pathname === href;
                 return (
                   <Link
                     key={href}
