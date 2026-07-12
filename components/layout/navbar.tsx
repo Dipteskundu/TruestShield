@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Shield, Menu, X, LayoutDashboard, LogOut, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 import { ProfileDropdown } from "./profile-dropdown";
 
@@ -86,6 +87,7 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           {session ? (
             <ProfileDropdown />
           ) : (
@@ -142,6 +144,10 @@ export function Navbar() {
             );
           })}
           <div className="my-2 h-px bg-border" />
+          <div className="flex items-center gap-2 px-4 py-2">
+            <ThemeToggle />
+            <span className="text-sm text-muted-foreground">Toggle theme</span>
+          </div>
           {session ? (
             <>
               <div className="flex items-center gap-3 px-4 py-2.5 mb-1">

@@ -48,9 +48,7 @@ export default function DocumentUploadPage() {
         formData.append("text", text);
       }
 
-      const { data } = await api.post("/api/documents/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const { data } = await api.post("/api/documents/upload", formData);
 
       router.push(`/documents/${data.data.id}`);
     } catch (err: unknown) {

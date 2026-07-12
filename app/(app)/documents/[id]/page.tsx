@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDocumentStatus } from "@/hooks/use-document-status";
-import { ClauseCard } from "@/components/document/clause-card";
 import { ChatPanel } from "@/components/document/chat-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +12,7 @@ import type { DocumentDetail, GlossaryEntry } from "@/types/document";
 import {
   FileText, Download, AlertTriangle, Loader2, Shield, FileWarning,
   BookOpen, ShieldAlert, ChevronDown, ChevronUp, Copy, Check, Clock,
+  MessageSquare,
 } from "lucide-react";
 
 const AUTO_DELETE_OPTIONS = [
@@ -128,7 +128,7 @@ export default function DocumentDetailPage({ params }: { params: { id: string } 
     );
   }
 
-  const { document, clauses } = detail;
+  const { document } = detail;
 
   const riskColor =
     document.overallRiskScore > 60
@@ -187,6 +187,14 @@ export default function DocumentDetailPage({ params }: { params: { id: string } 
             {copied ? <Check className="mr-1.5 h-3.5 w-3.5" /> : <Copy className="mr-1.5 h-3.5 w-3.5" />}
             {copied ? "Copied!" : "Share"}
           </Button>
+          {detail.document.treeBuilt && (
+            <Link href={`/documents/${params.id}/chat`}>
+              <Button variant="outline" size="sm">
+                <MessageSquare className="mr-1.5 h-3.5 w-3.5" />
+                Chat
+              </Button>
+            </Link>
+          )}
           <Link href={`/documents/${params.id}/export`}>
             <Button variant="outline" size="sm">
               <Download className="mr-1.5 h-3.5 w-3.5" />
@@ -217,23 +225,7 @@ export default function DocumentDetailPage({ params }: { params: { id: string } 
         </div>
         <div>
           <p className="text-sm font-semibold">Overall Risk Score</p>
-          <p className="text-sm text-muted-foreground">
-            Based on {clauses.length} analyzed clause{clauses.length !== 1 ? "s" : ""}
-          </p>
-          <div className="mt-2 flex gap-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-red-500" />
-              {clauses.filter((c) => c.riskLevel === "high").length} high
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
-              {clauses.filter((c) => c.riskLevel === "medium").length} medium
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              {clauses.filter((c) => c.riskLevel === "low").length} low
-            </span>
-          </div>
+          <p className={`text-sm ${riskColor}`}>{riskLabel}</p>
         </div>
       </div>
 
@@ -314,15 +306,6 @@ export default function DocumentDetailPage({ params }: { params: { id: string } 
           )}
         </Card>
       )}
-
-      <section>
-        <h2 className="mb-4 text-lg font-semibold">Clause breakdown</h2>
-        <div className="space-y-4">
-          {clauses.map((clause) => (
-            <ClauseCard key={clause._id} clause={clause} />
-          ))}
-        </div>
-      </section>
 
       <ChatPanel documentId={params.id} />
     </div>

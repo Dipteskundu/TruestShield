@@ -15,6 +15,7 @@ import {
   Shield,
   MessageSquare,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const appLinks = [
@@ -98,6 +99,12 @@ export function MobileSidebar({ role, open = false, onClose }: MobileSidebarProp
               );
             })}
           </nav>
+          <div className="border-t border-border/50 p-3">
+            <div className="flex items-center gap-3 rounded-xl px-3.5 py-2.5">
+              <ThemeToggle />
+              <span className="text-sm text-muted-foreground">Toggle theme</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

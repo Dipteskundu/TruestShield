@@ -9,6 +9,7 @@ export interface DocumentSummary {
   overallRiskScore: number;
   executiveSummary?: string;
   createdAt: string;
+  treeBuilt?: boolean;
 }
 
 export interface Clause {

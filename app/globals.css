@@ -365,3 +365,29 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Theme transition overlay */
+.theme-transition-overlay {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+/* Disable transitions on all elements during theme switch to prevent flicker */
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+}
+
+/* View Transitions API support (progressive enhancement) */
+::view-transition-old(root) {
+  animation: none;
+}
+
+::view-transition-new(root) {
+  animation: none;
+}

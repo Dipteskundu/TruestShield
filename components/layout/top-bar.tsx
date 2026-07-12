@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Shield, Menu, Bell } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ProfileDropdown } from "./profile-dropdown";
 
 interface TopBarProps {
@@ -38,6 +39,7 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             <Bell className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary animate-pulse" />
           </button>
+          <ThemeToggle />
           {session && <ProfileDropdown />}
         </div>
       </div>
