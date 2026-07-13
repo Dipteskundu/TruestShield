@@ -1,17 +1,36 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Shield, Menu, Bell } from "lucide-react";
+import { Shield, Menu, Bell, PanelLeftClose, PanelLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { ProfileDropdown } from "./profile-dropdown";
+import api from "@/lib/api";
 
 interface TopBarProps {
   onMenuClick?: () => void;
+  sidebarCollapsed?: boolean;
+  onToggleSidebar?: () => void;
 }
 
-export function TopBar({ onMenuClick }: TopBarProps) {
+export function TopBar({ onMenuClick, sidebarCollapsed, onToggleSidebar }: TopBarProps) {
   const { data: session } = useSession();
+  const [avatar, setAvatar] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session?.user) {
+      api.get("/api/user/profile").then(({ data }) => {
+        setAvatar(data.data.avatar || null);
+      }).catch(() => {});
+    }
+  }, [session?.user]);
+
+  const initials = (session?.user?.name || session?.user?.email || "U")
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-strong border-b">
@@ -32,6 +51,17 @@ export function TopBar({ onMenuClick }: TopBarProps) {
               Trust<span className="text-gradient">Shield</span>
             </span>
           </Link>
+          <button
+            onClick={onToggleSidebar}
+            className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl hover:bg-primary/5 transition-colors"
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {sidebarCollapsed ? (
+              <PanelLeft className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
+            ) : (
+              <PanelLeftClose className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
+            )}
+          </button>
         </div>
 
         <div className="flex items-center gap-2">
@@ -39,8 +69,19 @@ export function TopBar({ onMenuClick }: TopBarProps) {
             <Bell className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
             <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary animate-pulse" />
           </button>
-          <ThemeToggle />
-          {session && <ProfileDropdown />}
+          <ThemeToggle className="hidden md:flex" />
+          {session?.user && (
+            <Link
+              href="/dashboard/profile"
+              className="flex h-8 w-8 items-center justify-center rounded-full gradient-primary text-xs font-bold text-white overflow-hidden hover:ring-2 hover:ring-primary/30 transition-all"
+            >
+              {avatar ? (
+                <img src={avatar} alt="Profile" className="h-full w-full object-cover" />
+              ) : (
+                initials
+              )}
+            </Link>
+          )}
         </div>
       </div>
     </header>

@@ -62,7 +62,7 @@ export function ProfileDropdown() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-56 glass rounded-2xl border border-border/50 p-1.5 shadow-glass animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 top-full mt-2 w-56 bg-background rounded-2xl border border-border/50 p-1.5 shadow-lg animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="px-3 py-2.5 mb-1">
             <p className="text-sm font-medium truncate">{session.user.name || "User"}</p>
             <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>

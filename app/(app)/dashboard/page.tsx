@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import {
   Card,
   CardContent,
@@ -235,6 +236,7 @@ const quickActions = [
 ];
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<UsageData | null>(null);
   const [error, setError] = useState(false);
@@ -272,6 +274,8 @@ export default function DashboardPage() {
     { label: "Docs", value: data.allTime.documents, color: "rose" },
   ];
 
+  const displayName = session?.user?.name || session?.user?.email?.split("@")[0] || "User";
+
   return (
     <div className="space-y-8">
       {/* Header Banner */}
@@ -281,7 +285,7 @@ export default function DashboardPage() {
         <div className="relative p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-3xl font-bold tracking-tight">
-              {getGreeting()} <span className="inline-block animate-float">👋</span>
+              {getGreeting()}, <span className="text-gradient">{displayName}</span> <span className="inline-block animate-float">👋</span>
             </h1>
             <p className="text-muted-foreground">
               Your trust verification activity at a glance.
