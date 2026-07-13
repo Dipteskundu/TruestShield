@@ -8,6 +8,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { copyToClipboard } from "@/lib/clipboard";
 import { Button } from "@/components/ui/button";
 import { ImageUploader } from "@/components/scan/image-uploader";
 import { ScanInput } from "@/components/scan/scan-input";
@@ -23,7 +24,6 @@ import { VERDICT_COLORS, SCAN_TYPES, type ScanType } from "@/lib/constants";
 import api from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { useRecentScans } from "@/hooks/use-scan-result";
-import { notFound } from "next/navigation";
 
 interface ScanResult {
   id: string;
@@ -149,12 +149,14 @@ export default function EmailScanPage() {
     }
   }
 
-  function copyShareLink() {
+  async function copyShareLink() {
     if (!result?.id) return;
     const url = `${window.location.origin}/result/${result.id}`;
-    navigator.clipboard.writeText(url);
-    setCopying(true);
-    setTimeout(() => setCopying(false), 2000);
+    const ok = await copyToClipboard(url);
+    if (ok) {
+      setCopying(true);
+      setTimeout(() => setCopying(false), 2000);
+    }
   }
 
   return (

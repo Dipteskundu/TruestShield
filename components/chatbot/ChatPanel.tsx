@@ -45,17 +45,20 @@ export function ChatPanel() {
   const isChatActive = activeSessionId !== null || messages.length > 0;
 
   useEffect(() => {
-    api
-      .get("/api/chatbot/status")
-      .then(({ data }) => setBlocked(data.data.blocked))
-      .catch(() => {});
-    api
-      .get("/api/user/profile")
-      .then(({ data }) => {
-        const name = data.data?.name?.split(" ")[0];
+    const fetchData = async () => {
+      const [statusRes, profileRes] = await Promise.allSettled([
+        api.get("/api/chatbot/status"),
+        api.get("/api/user/profile"),
+      ]);
+      if (statusRes.status === "fulfilled") {
+        setBlocked(statusRes.value.data.data.blocked);
+      }
+      if (profileRes.status === "fulfilled") {
+        const name = profileRes.value.data.data?.name?.split(" ")[0];
         setUserName(name);
-      })
-      .catch(() => {});
+      }
+    };
+    fetchData();
     loadSessions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

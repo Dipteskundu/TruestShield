@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 interface DonutSegment {
@@ -82,27 +82,27 @@ export function DonutChart({
   >([]);
   const total = data.reduce((sum, d) => sum + d.value, 0);
 
-  useEffect(() => {
-    if (total === 0) return;
-
+  const segments = useMemo(() => {
+    if (total === 0) return [];
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
-
     let accumulatedOffset = 0;
-    const segments = data.map((d) => {
+    return data.map((d) => {
       const pct = d.value / total;
       const length = pct * circumference;
       const offset = accumulatedOffset;
       accumulatedOffset += length;
       return { offset, length };
     });
+  }, [data, total, size, strokeWidth]);
 
+  useEffect(() => {
+    if (segments.length === 0) return;
     const timer = setTimeout(() => {
       setAnimatedSegments(segments);
     }, 100);
-
     return () => clearTimeout(timer);
-  }, [data, total, size, strokeWidth]);
+  }, [segments]);
 
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;

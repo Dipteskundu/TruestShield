@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ImageUploader } from "@/components/scan/image-uploader";
+import { copyToClipboard } from "@/lib/clipboard";
 import { ConfidenceGauge } from "@/components/scan/confidence-gauge";
 import { ReasonList } from "@/components/scan/reason-list";
 import { ImageMetadata } from "@/components/scan/image-metadata";
@@ -108,12 +109,14 @@ export default function ImageScanPage() {
     return true;
   }
 
-  function copyShareLink() {
+  async function copyShareLink() {
     if (!result?.id) return;
     const url = `${window.location.origin}/result/${result.id}`;
-    navigator.clipboard.writeText(url);
-    setCopying(true);
-    setTimeout(() => setCopying(false), 2000);
+    const ok = await copyToClipboard(url);
+    if (ok) {
+      setCopying(true);
+      setTimeout(() => setCopying(false), 2000);
+    }
   }
 
   return (

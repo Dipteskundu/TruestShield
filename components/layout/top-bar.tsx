@@ -23,7 +23,7 @@ export function TopBar({ onMenuClick, sidebarCollapsed, onToggleSidebar }: TopBa
         setAvatar(data.data.avatar || null);
       }).catch(() => {});
     }
-  }, [session?.user]);
+  }, [session?.user?.id]);
 
   const initials = (session?.user?.name || session?.user?.email || "U")
     .split(" ")

@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { SCAN_TYPES, type ScanType } from "@/lib/constants";
 import { ScanInput } from "@/components/scan/scan-input";
+import { copyToClipboard } from "@/lib/clipboard";
 import { ImageUploader } from "@/components/scan/image-uploader";
 import { ImageMetadata } from "@/components/scan/image-metadata";
 import { ConfidenceGauge } from "@/components/scan/confidence-gauge";
@@ -67,7 +68,7 @@ export default function ScanPage({ params }: { params: { type: string } }) {
       const used = getGuestCreditsUsed(type);
       setRemaining(2 - used);
     }
-  }, [session, type]);
+  }, [session?.user?.id, type]);
 
   function clearError() {
     setError("");
@@ -136,12 +137,10 @@ export default function ScanPage({ params }: { params: { type: string } }) {
   async function copyShareLink() {
     if (!result?.id) return;
     setCopying(true);
-    try {
-      await navigator.clipboard.writeText(
-        `${window.location.origin}/result/${result.id}`
-      );
+    const ok = await copyToClipboard(`${window.location.origin}/result/${result.id}`);
+    if (ok) {
       setTimeout(() => setCopying(false), 1500);
-    } catch {
+    } else {
       setCopying(false);
     }
   }

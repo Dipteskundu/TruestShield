@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 interface ProgressRingProps {
@@ -55,7 +55,7 @@ export function ProgressRing({
   label,
   sublabel,
 }: ProgressRingProps) {
-  const gradientId = `ring-gradient-${Math.random().toString(36).slice(2, 9)}`;
+  const gradientId = useMemo(() => `ring-gradient-${Math.random().toString(36).slice(2, 9)}`, []);
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const pct = limit === null || limit === 0 ? 100 : Math.min(100, Math.round((used / limit) * 100));

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toaster";
 import api from "@/lib/api";
+import { copyToClipboard } from "@/lib/clipboard";
 import type { DocumentDetail, GlossaryEntry } from "@/types/document";
 import {
   FileText, Download, AlertTriangle, Loader2, Shield, FileWarning,
@@ -74,8 +75,8 @@ export default function DocumentDetailPage({ params }: { params: { id: string } 
   async function handleShare() {
     try {
       const { data } = await api.post(`/api/documents/${params.id}/share`);
-      await navigator.clipboard.writeText(data.data.shareUrl);
-      setCopied(true);
+      const ok = await copyToClipboard(data.data.shareUrl);
+      if (ok) setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Share failed

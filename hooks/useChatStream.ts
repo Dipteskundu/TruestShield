@@ -50,8 +50,20 @@ export function useChatStream() {
         }
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Failed to send message");
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.data?.response || errorData.message || "Failed to send message");
+        }
+
+        const contentType = response.headers.get("content-type") || "";
+        if (contentType.includes("application/json")) {
+          const data = await response.json();
+          const content = data.data?.response || "";
+          setStreamedContent(content);
+          onChunk?.(content);
+          return {
+            content,
+            sessionId: newSessionId || sessionId || currentSessionId,
+          };
         }
 
         const reader = response.body?.getReader();

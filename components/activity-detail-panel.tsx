@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { copyToClipboard } from "@/lib/clipboard";
 import {
   X,
   ShieldCheck,
@@ -134,7 +135,7 @@ export function ActivityDetailPanel({ item, onClose }: ActivityDetailPanelProps)
 
   function copyInput() {
     if (item?.inputFull) {
-      navigator.clipboard.writeText(item.inputFull);
+      copyToClipboard(item.inputFull);
     }
   }
 

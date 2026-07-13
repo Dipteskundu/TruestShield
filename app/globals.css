@@ -366,28 +366,34 @@
   }
 }
 
-/* Theme transition overlay */
-.theme-transition-overlay {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  border-radius: 50%;
-  will-change: transform;
-}
-
-/* Disable transitions on all elements during theme switch to prevent flicker */
-html.theme-transitioning *,
-html.theme-transitioning *::before,
-html.theme-transitioning *::after {
-  transition-duration: 0ms !important;
-  animation-duration: 0ms !important;
-}
-
-/* View Transitions API support (progressive enhancement) */
+/* ─── View Transitions API ──────────────────────────────────────────────
+   The old snapshot stays hidden underneath; the new snapshot animates
+   on top via a natively composited CSS clip-path keyframe animation.
+   The origin is hardcoded to the top-right corner (100vw 0px) — no
+   CSS variable inheritance between layers, no JS dependency.
+─────────────────────────────────────────────────────────────────────────── */
 ::view-transition-old(root) {
   animation: none;
+  z-index: 1;
 }
 
 ::view-transition-new(root) {
-  animation: none;
+  animation: vt-clip-reveal var(--vt-duration) ease-in-out both;
+  z-index: 9999;
+}
+
+/* 300vmax covers any viewport from the top-right corner.
+   sqrt(100²+100²) ≈ 141.42 viewport diagonal units — 300 is well beyond. */
+@keyframes vt-clip-reveal {
+  from {
+    clip-path: circle(0px at 100vw 0px);
+  }
+  to {
+    clip-path: circle(300vmax at 100vw 0px);
+  }
+}
+
+/* Only --vt-duration is needed as a variable (for JS to adjust speed). */
+:root {
+  --vt-duration: 500ms;
 }
