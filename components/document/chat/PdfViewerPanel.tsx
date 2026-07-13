@@ -15,7 +15,7 @@ export default function PdfViewerPanel({
   currentPage,
   highlightedNodeId,
 }: Props) {
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(1); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [scale, setScale] = useState(1);
   const [pageInput, setPageInput] = useState(currentPage.toString());
   const containerRef = useRef<HTMLDivElement>(null);

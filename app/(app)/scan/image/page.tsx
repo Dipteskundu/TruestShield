@@ -15,7 +15,7 @@ import { CreditBadge } from "@/components/scan/credit-badge";
 import { LoginPromptDialog } from "@/components/scan/login-prompt-dialog";
 import { UpgradePromptDialog } from "@/components/scan/upgrade-prompt-dialog";
 import { Copy, Share2, RefreshCw, Clock, AlertCircle } from "lucide-react";
-import { VERDICT_COLORS, SCAN_TYPES, type ScanType } from "@/lib/constants";
+import { VERDICT_COLORS, type ScanType } from "@/lib/constants";
 import api from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { useRecentScans } from "@/hooks/use-scan-result";
@@ -34,7 +34,6 @@ const TYPE_GUIDANCE = {
 } as const;
 
 const type = "image" as ScanType;
-const config = SCAN_TYPES[type];
 
 export default function ImageScanPage() {
   const router = useRouter();

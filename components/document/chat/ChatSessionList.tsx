@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { DocumentChatSession } from "@/types/documentChat";
-import { ChevronDown, MessageSquare, Trash2 } from "lucide-react";
+import { ChevronDown, MessageSquare } from "lucide-react";
 
 interface Props {
   sessions: DocumentChatSession[];

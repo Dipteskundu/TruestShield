@@ -6,7 +6,6 @@ import ChatMessageBubble from "./ChatMessageBubble";
 import ChatSessionList from "./ChatSessionList";
 import { Button } from "@/components/ui/button";
 import { Send, Plus, Loader2 } from "lucide-react";
-import type { CitedNode } from "@/types/documentChat";
 
 interface Props {
   documentId: string;

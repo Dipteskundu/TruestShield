@@ -68,7 +68,8 @@ export default function ScanPage({ params }: { params: { type: string } }) {
       const used = getGuestCreditsUsed(type);
       setRemaining(2 - used);
     }
-  }, [session?.user?.id, type]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(session?.user), type]);
 
   function clearError() {
     setError("");

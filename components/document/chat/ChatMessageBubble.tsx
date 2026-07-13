@@ -1,7 +1,7 @@
 "use client";
 
 import CitationTag from "./CitationTag";
-import type { DocumentChatMessage, CitedNode } from "@/types/documentChat";
+import type { DocumentChatMessage } from "@/types/documentChat";
 import { User, Bot } from "lucide-react";
 
 interface Props {

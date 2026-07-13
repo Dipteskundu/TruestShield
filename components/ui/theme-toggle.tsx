@@ -18,7 +18,7 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   useEffect(() => setMounted(true), []);
 
-  const cycleTheme = (event: React.MouseEvent) => {
+  const cycleTheme = () => {
     const current = theme || "system";
     const idx = themes.indexOf(current as (typeof themes)[number]);
     const next = themes[(idx + 1) % themes.length];
@@ -33,7 +33,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       : next === "light" ? "light" : "dark";
 
     if (currentResolved !== nextResolved) {
-      toggleTheme(next, event);
+      toggleTheme(next);
     } else {
       toggleTheme(next);
     }
