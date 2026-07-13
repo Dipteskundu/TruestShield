@@ -2,25 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import {
   Briefcase,
-  ChevronRight,
   ClipboardList,
   FileText,
-  HelpCircle,
   History,
   Image,
   LayoutDashboard,
   Link as LinkIcon,
-  LogOut,
   Mail,
   MessageSquare,
   ScanSearch,
   Settings,
-  Smile,
-  Sparkles,
-  User,
   X,
   Shield,
 } from "lucide-react";
@@ -62,14 +56,6 @@ const adminNavGroups = [
   },
 ];
 
-const profileMenuItems = [
-  { href: "/pricing", label: "Upgrade Plan", icon: Sparkles },
-  { href: "/dashboard/personalization", label: "Personalization", icon: Smile },
-  { href: "/dashboard/profile", label: "Profile", icon: User },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
-  { href: "/help", label: "Help", icon: HelpCircle },
-];
-
 interface MobileSidebarProps {
   role?: string;
   open?: boolean;
@@ -94,12 +80,6 @@ export function MobileSidebar({ role, open = false, onClose }: MobileSidebarProp
     .join("")
     .toUpperCase()
     .slice(0, 2);
-
-  const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
-    onClose?.();
-  };
-
   return (
     <div className="md:hidden">
       <div
@@ -163,14 +143,14 @@ export function MobileSidebar({ role, open = false, onClose }: MobileSidebarProp
           </nav>
 
           {session && (
-            <div className="border-t border-border/50">
-              <div className="px-4 pt-4 pb-2">
+            <div className="border-t border-border/50 p-3">
+              <div className="flex items-center gap-2">
                 <Link
-                  href="/dashboard/profile"
+                  href="/dashboard/settings"
                   onClick={onClose}
-                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 hover:bg-primary/5 transition-all group"
+                  className="flex items-center gap-3 flex-1 min-w-0 rounded-xl bg-muted/30 px-3 py-2.5 hover:bg-muted/50 transition-all group"
                 >
-                  <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10 text-sm font-semibold text-primary overflow-hidden ring-2 ring-primary/10">
+                  <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/10 text-xs font-semibold text-primary overflow-hidden ring-2 ring-primary/10">
                     {userImage ? (
                       <img
                         src={userImage}
@@ -185,54 +165,13 @@ export function MobileSidebar({ role, open = false, onClose }: MobileSidebarProp
                     <p className="text-sm font-medium text-foreground truncate">
                       {userName}
                     </p>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <span
-                        className={cn(
-                          "text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded",
-                          userPlan === "pro"
-                            ? "text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30"
-                            : "text-primary bg-primary/10"
-                        )}
-                      >
-                        {planLabel}
-                      </span>
-                    </div>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {planLabel} plan
+                    </p>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+                  <Settings className="h-4 w-4 shrink-0 text-muted-foreground group-hover:text-foreground transition-colors" />
                 </Link>
-              </div>
-
-              <div className="px-4 pb-2">
-                {profileMenuItems.map(({ href, label, icon: Icon }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={onClose}
-                    className={cn(
-                      "flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm text-muted-foreground hover:bg-primary/5 hover:text-foreground transition-all group",
-                      pathname === href && "bg-primary/10 font-medium text-primary"
-                    )}
-                  >
-                    <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-                    <span>{label}</span>
-                  </Link>
-                ))}
-              </div>
-
-              <div className="border-t border-border/50 mx-4" />
-
-              <div className="px-4 py-2 space-y-0.5">
-                <button
-                  onClick={handleSignOut}
-                  className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm text-muted-foreground hover:bg-destructive/5 hover:text-destructive transition-all group"
-                >
-                  <LogOut className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
-                  <span>Sign out</span>
-                </button>
-                <div className="flex items-center gap-3 rounded-xl px-3.5 py-2.5">
-                  <ThemeToggle />
-                  <span className="text-sm text-muted-foreground">Toggle theme</span>
-                </div>
+                <ThemeToggle />
               </div>
             </div>
           )}
