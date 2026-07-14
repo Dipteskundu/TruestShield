@@ -11,15 +11,19 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        provider: { label: "Provider", type: "text" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email) return null;
 
         try {
-          const { data } = await axios.post(`${API_URL}/api/auth/login`, {
-            email: credentials.email,
-            password: credentials.password,
-          });
+          const isOAuth = credentials.provider === "firebase-oauth";
+          const endpoint = isOAuth ? "/api/auth/oauth-login" : "/api/auth/login";
+          const payload = isOAuth
+            ? { email: credentials.email }
+            : { email: credentials.email, password: credentials.password };
+
+          const { data } = await axios.post(`${API_URL}${endpoint}`, payload);
 
           if (data.success && data.data) {
             return {

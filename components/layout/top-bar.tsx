@@ -23,8 +23,7 @@ export function TopBar({ onMenuClick, sidebarCollapsed, onToggleSidebar }: TopBa
         setAvatar(data.data.avatar || null);
       }).catch(() => {});
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(session?.user)]);
+  }, [session?.user?.email]);
 
   const initials = (session?.user?.name || session?.user?.email || "U")
     .split(" ")
