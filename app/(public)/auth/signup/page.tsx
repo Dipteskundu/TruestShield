@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Shield, Check, Mail, Loader2 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import api, { setAuthToken } from "@/lib/api";
-import { auth, googleProvider, githubProvider } from "@/lib/firebase";
+import { auth, googleProvider, githubProvider, isConfigured } from "@/lib/firebase";
 import { signInWithPopup } from "firebase/auth";
 
 export default function SignupPage() {
@@ -18,6 +18,12 @@ export default function SignupPage() {
   async function handleOAuth(provider: "google" | "github") {
     setError("");
     setLoading(provider);
+
+    if (!isConfigured || !auth) {
+      setError("Social login is not configured. Please sign up with email instead.");
+      setLoading(null);
+      return;
+    }
 
     try {
       const firebaseProvider =

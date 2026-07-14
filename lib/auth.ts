@@ -68,3 +68,7 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+if (!process.env.NEXTAUTH_SECRET) {
+  console.error("[TrustShield] CRITICAL: NEXTAUTH_SECRET is not set. Authentication will fail.");
+}

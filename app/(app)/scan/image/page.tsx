@@ -161,7 +161,7 @@ export default function ImageScanPage() {
                 </span>
               </summary>
               <div className="border-t border-border/50">
-                {recentScans.data.map((scan: { id: string; verdict: string; createdAt: string }) => (
+                {recentScans.data?.map((scan: { id: string; verdict: string; createdAt: string }) => (
                   <button
                     key={scan.id}
                     onClick={() => router.push(`/result/${scan.id}`)}
