@@ -19,15 +19,8 @@ import { VERDICT_COLORS, type ScanType } from "@/lib/constants";
 import api from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 import { useRecentScans } from "@/hooks/use-scan-result";
-
-interface ScanResult {
-  id: string;
-  type: string;
-  verdict: "safe" | "suspicious" | "dangerous";
-  confidence: number;
-  reasons: string[];
-  metadata?: Record<string, unknown>;
-}
+import { getGuestCreditsUsed, incrementGuestCredits } from "@/lib/guest-credits";
+import type { ScanResult } from "@/types/scan";
 
 const TYPE_GUIDANCE = {
   image: "Upload an image to check if it was AI-generated or manipulated. JPEG, PNG, and WebP supported.",
@@ -61,24 +54,6 @@ export default function ImageScanPage() {
       setRemaining(2 - used);
     }
   }, [session]);
-
-  function getGuestCreditsUsed(type: string): number {
-    if (typeof window === "undefined") return 0;
-    try {
-      const stored = localStorage.getItem(`guest_credits_${type}`);
-      return stored ? JSON.parse(stored) : 0;
-    } catch {
-      return 0;
-    }
-  }
-
-  function incrementGuestCredits(type: string) {
-    if (typeof window === "undefined") return;
-    try {
-      const used = getGuestCreditsUsed(type);
-      localStorage.setItem(`guest_credits_${type}`, JSON.stringify(used + 1));
-    } catch {}
-  }
 
   function clearError() {
     setError("");

@@ -33,6 +33,10 @@ export function useThemeTransition(options: UseThemeTransitionOptions = {}) {
     // Set animation speed from JS
     root.style.setProperty("--vt-duration", `${duration}ms`);
 
+    // Defensively remove any orphaned [data-vt] style tags left behind
+    // by a previous interrupted transition (e.g. rapid theme toggle clicks).
+    document.querySelectorAll("style[data-vt]").forEach((el) => el.remove());
+
     // Inject a temporary style to suppress CSS transitions on regular DOM
     // elements during the view transition. Without this, hundreds of
     // background/color transitions fire simultaneously with the clip-path
@@ -56,30 +60,38 @@ export function useThemeTransition(options: UseThemeTransitionOptions = {}) {
 
     try {
       await transition.ready;
-      if (effect !== "circular") {
-        const x = window.innerWidth;
-        const y = 0;
-        const endRadius = Math.hypot(window.innerWidth, window.innerHeight);
-        THEME_EFFECTS[effect]({
-          x,
-          y,
-          endRadius,
-          duration,
-          direction: nextTheme === "dark" ? "to-dark" : "to-light",
-        });
-      }
+
+      // CRITICAL: Always run the JS Web Animations API animation for ALL effects
+      // including "circular". Relying solely on the CSS vt-clip-reveal keyframe
+      // means if the browser skips or interrupts the view transition,
+      // ::view-transition-new(root) is left at clip-path:circle(0px...) and
+      // never expands — making the entire page appear invisible (no CSS rendering).
+      // The JS animation overrides the CSS one and handles this safely.
+      const x = window.innerWidth;
+      const y = 0;
+      const endRadius = Math.hypot(window.innerWidth, window.innerHeight);
+      THEME_EFFECTS[effect]({
+        x,
+        y,
+        endRadius,
+        duration,
+        direction: nextTheme === "dark" ? "to-dark" : "to-light",
+      });
     } catch {
-      // View transition was cancelled or failed - continue with cleanup
+      // View transition was cancelled or failed — cleanup handled in finally
     }
 
     try {
       await transition.finished;
     } catch {
-      // View transition was interrupted - continue with cleanup
+      // View transition was interrupted — cleanup handled in finally
+    } finally {
+      // ALWAYS clean up the transition-blocking style, even if transition
+      // failed, was interrupted, or the browser skipped it entirely.
+      // Leaving this style in the DOM would permanently suppress all CSS
+      // transitions, making the page appear broken.
+      blockerGlobal.remove();
     }
-
-    // Clean up the transition-blocking style
-    blockerGlobal.remove();
   }
 
   return {

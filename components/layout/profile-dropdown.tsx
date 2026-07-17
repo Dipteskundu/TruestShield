@@ -15,11 +15,14 @@ export function ProfileDropdown() {
 
   useEffect(() => {
     if (session?.user) {
-      api.get("/api/user/profile").then(({ data }) => {
+      const token = (session as { accessToken?: string }).accessToken;
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      
+      api.get("/api/user/profile", { headers }).then(({ data }) => {
         setAvatar(data.data.avatar || null);
       }).catch(() => {});
     }
-  }, [session?.user]);
+  }, [session]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

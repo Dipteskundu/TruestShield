@@ -91,6 +91,30 @@ const config: Config = {
           "0%, 100%": { boxShadow: "0 0 0 1px var(--glow-color)" },
           "50%": { boxShadow: "0 0 0 2px var(--glow-color), 0 0 20px var(--glow-color)" },
         },
+        "mobile-menu-slide": {
+          "0%": { opacity: "0", transform: "translateX(-100%) scale(0.95)" },
+          "100%": { opacity: "1", transform: "translateX(0) scale(1)" },
+        },
+        "mobile-menu-fade": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "stagger-fade-in": {
+          "0%": { opacity: "0", transform: "translateY(8px) scale(0.98)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 0 0 var(--glow-color)" },
+          "50%": { boxShadow: "0 0 20px 4px var(--glow-color)" },
+        },
+        "slide-up": {
+          "0%": { opacity: "0", transform: "translateY(100%)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "scale-up": {
+          "0%": { opacity: "0", transform: "scale(0.9) translateY(20px)" },
+          "100%": { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
       },
       animation: {
         float: "float 6s ease-in-out infinite",
@@ -101,6 +125,12 @@ const config: Config = {
         "scale-in": "scale-in 0.3s ease-out forwards",
         "progress-fill": "progress-fill 1s ease-out forwards",
         "border-glow": "border-glow 3s ease-in-out infinite",
+        "mobile-menu-slide": "mobile-menu-slide 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "mobile-menu-fade": "mobile-menu-fade 0.3s ease-out forwards",
+        "stagger-fade-in": "stagger-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "slide-up": "slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "scale-up": "scale-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
       },
     },
   },

@@ -23,7 +23,7 @@ export default function AdminScansPage() {
   const verdictIcon = (verdict: string) => {
     switch (verdict) {
       case "safe": return <CheckCircle className="h-3.5 w-3.5 text-emerald-500" />;
-      case "risky": return <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />;
+      case "suspicious": return <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />;
       case "dangerous": return <XCircle className="h-3.5 w-3.5 text-red-500" />;
       default: return <Shield className="h-3.5 w-3.5 text-muted-foreground" />;
     }
@@ -31,7 +31,7 @@ export default function AdminScansPage() {
 
   const verdictColors: Record<string, string> = {
     safe: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300",
-    risky: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300",
+    suspicious: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300",
     dangerous: "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300",
   };
 
